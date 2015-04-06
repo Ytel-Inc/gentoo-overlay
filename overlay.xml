@@ -1,0 +1,11 @@
+<?xml version="1.0" ?>
+<layman>
+	<overlay
+		type = "git"
+		src  = "https://bitbucket.org/ytel/gentoo-overlay.git"
+		contact = "opensource@ytel.com"
+		name = "gentoo-overlay">
+		<link>https://bitbucket.org/ytel/gentoo-overlay/wiki/Home</link>
+		<description>Ytel's Gentoo Overlay</description>
+	</overlay>
+</layman> 
