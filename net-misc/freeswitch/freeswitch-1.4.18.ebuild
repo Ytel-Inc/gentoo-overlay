@@ -223,9 +223,13 @@ REQUIRED_USE="
 
 RDEPEND="
 	media-libs/speex
+	dev-db/sqlite
 	libedit? ( dev-libs/libedit )
 	odbc? ( dev-db/unixODBC )
 	sctp? ( kernel_linux? ( net-misc/lksctp-tools ) )
+	freeswitch_modules_memcache? ( dev-libs/libmemcached )
+	freeswitch_modules_esl? ( dev-lang/swig )
+	freeswitch_modules_lua? ( dev-lang/lua )
 	freeswitch_modules_cdr_sqlite? ( dev-db/sqlite )
 	freeswitch_modules_curl? ( net-misc/curl )
 	freeswitch_modules_opus? ( media-libs/opus )
