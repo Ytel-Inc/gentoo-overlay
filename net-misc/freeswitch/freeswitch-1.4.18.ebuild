@@ -309,7 +309,7 @@ src_prepare() {
 	sed -e 's/-Werror//' -i configure || dir "failed to prepare compile options"
 	sed -e 's/-Wno-unused-result//' -i configure || dir "failed to prepare compile options"
 	if use freeswitch_modules_amd; then
-		tar -zxf "${FILESDIR}"/mod_amd.tar.gz src/mod/applications/ || die "failed to extract mod_amd"
+		tar -zxf "${FILESDIR}"/mod_amd.tar.gz -C src/mod/applications/ || die "failed to extract mod_amd"
 	fi
 
 	if use freeswitch_esl_php; then
