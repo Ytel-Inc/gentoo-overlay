@@ -22,6 +22,11 @@ RESTRICT="mirror"
 
 S="${WORKDIR}/${P/_/}"
 
+
+PATCHES=(
+	"${FILESDIR}/switch_core_media_bug.patch"
+)
+
 FS_MODULES_CORE="
 	freeswitch_modules_commands:applications/mod_commands
 	freeswitch_modules_db:applications/mod_db
