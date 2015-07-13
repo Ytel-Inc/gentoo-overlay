@@ -22,11 +22,6 @@ RESTRICT="mirror"
 
 S="${WORKDIR}/${P/_/}"
 
-
-PATCHES=(
-	"${FILESDIR}/switch_core_media_bug.patch"
-)
-
 FS_MODULES_CORE="
 	freeswitch_modules_commands:applications/mod_commands
 	freeswitch_modules_db:applications/mod_db
@@ -320,7 +315,9 @@ src_prepare() {
 	if use freeswitch_esl_php; then
 		sed -e 's/swig2\.0/swig/' -i libs/esl/php/Makefile.in || die "failed to prepare PHP esl module"
 	fi
-	epatch_user
+
+	# patch for https://freeswitch.org/jira/browse/FS-7032
+	epatch "${FILESDIR}/switch_core_media_bug.patch"
 }
 
 src_configure() {
