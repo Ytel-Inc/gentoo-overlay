@@ -7,9 +7,9 @@ EAPI="4"
 PHP_EXT_NAME="ESL"
 PHP_EXT_INI="yes"
 PHP_EXT_ZENDEXT="no"
-USE_PHP="php5-3 php5-4 php5-5"
 
-inherit autotools eutils flag-o-matic user php-ext-base-r1
+USE_PHP="php5-3 php5-4 php5-5 php5-6"
+inherit autotools eutils flag-o-matic user php-ext-source-r2
 
 DESCRIPTION="FreeSWITCH telephony platform"
 HOMEPAGE="http://www.freeswitch.org/"
@@ -394,8 +394,8 @@ src_install() {
 	fowners -Rf "${FREESWITCH_USER}":"${FREESWITCH_GROUP}" "/var/lib/${PN}"
 	if use freeswitch_esl_php; then
 		einfo "Installing PHP esl module..."
-		php-ext-base-r1_src_install
 		emake DESTDIR="${D}" -C libs/esl phpmod-install || die "failed to install PHP esl module"
+		php-ext-source-r2_createinifiles
 	fi
 }
 
