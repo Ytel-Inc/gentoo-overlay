@@ -45,6 +45,7 @@ FS_MODULES_CORE="
 FS_MODULES_OPTIONAL="
 	freeswitch_modules_abstraction:applications/mod_abstraction
 	freeswitch_modules_avmd:applications/mod_avmd
+	freeswitch_modules_amd:applications/mod_amd
 	freeswitch_modules_blacklist:applications/mod_blacklist
 	freeswitch_modules_callcenter:applications/mod_callcenter
 	freeswitch_modules_cidlookup:applications/mod_cidlookup
@@ -223,9 +224,13 @@ REQUIRED_USE="
 
 RDEPEND="
 	media-libs/speex
+	dev-db/sqlite
 	libedit? ( dev-libs/libedit )
 	odbc? ( dev-db/unixODBC )
 	sctp? ( kernel_linux? ( net-misc/lksctp-tools ) )
+	freeswitch_modules_memcache? ( dev-libs/libmemcached )
+	freeswitch_modules_esl? ( dev-lang/swig )
+	freeswitch_modules_lua? ( dev-lang/lua )
 	freeswitch_modules_cdr_sqlite? ( dev-db/sqlite )
 	freeswitch_modules_curl? ( net-misc/curl )
 	freeswitch_modules_opus? ( media-libs/opus )
@@ -303,10 +308,16 @@ src_prepare() {
 	einfo "Preparing FreeSWITCH..."
 	sed -e 's/-Werror//' -i configure || dir "failed to prepare compile options"
 	sed -e 's/-Wno-unused-result//' -i configure || dir "failed to prepare compile options"
+	if use freeswitch_modules_amd; then
+		tar -zxf "${FILESDIR}"/mod_amd.tar.gz -C src/mod/applications/ || die "failed to extract mod_amd"
+	fi
+
 	if use freeswitch_esl_php; then
 		sed -e 's/swig2\.0/swig/' -i libs/esl/php/Makefile.in || die "failed to prepare PHP esl module"
 	fi
-	epatch_user
+
+	# patch for https://freeswitch.org/jira/browse/FS-7032
+	epatch "${FILESDIR}/switch_core_media_bug.patch"
 }
 
 src_configure() {
