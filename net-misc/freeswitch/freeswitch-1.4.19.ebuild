@@ -306,6 +306,7 @@ src_prepare() {
 	if use freeswitch_esl_php; then
 		sed -e 's/swig2\.0/swig/' -i libs/esl/php/Makefile.in || die "failed to prepare PHP esl module"
 	fi
+	epatch "${FILESDIR}/switch_core.patch"
 	epatch_user
 }
 
