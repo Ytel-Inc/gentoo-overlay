@@ -368,6 +368,10 @@ src_prepare() {
 	# Fix broken libtool?
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr/Makefile.in"
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr-util/Makefile.in"
+
+	einfo
+	einfo "Adding AMD module"
+	einfo
 	cp -R "${FILESDIR}/AMD" "${S}/src/mod/applications/mod_amd"
 
 
