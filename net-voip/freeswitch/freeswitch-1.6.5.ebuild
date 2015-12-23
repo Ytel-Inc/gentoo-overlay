@@ -368,6 +368,7 @@ src_prepare() {
 	# Fix broken libtool?
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr/Makefile.in"
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr-util/Makefile.in"
+	cp -R "${FILESDIR}/AMD" "${S}/src/mod/applications/mod_amd"
 
 
 	if use freeswitch_modules_freetdm
@@ -527,12 +528,6 @@ src_install() {
 }
 
 pkg_postinst() {
-
-	# do the amd module
-	# we should also download  the source while we are add it
-	einfo
-	einfo "building AMD module"
-	"${S}"/files/AMD/install.sh
 
 	einfo
 	einfo "FreeSWITCH has been successfully emerged!"
