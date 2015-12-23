@@ -33,7 +33,8 @@ DEPEND="docs? ( app-doc/doxygen media-gfx/graphviz )
 	dev-libs/glib
 	app-misc/screen
 	dev-util/gengetopt
-	dev-libs/ding-libs"
+	dev-libs/ding-libs
+	net-libs/usrsctp"
 
 # janus-gateway-0.0.9
 S="${WORKDIR}/janus-gateway-${MY_P}"

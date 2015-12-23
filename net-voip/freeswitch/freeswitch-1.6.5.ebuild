@@ -527,6 +527,13 @@ src_install() {
 }
 
 pkg_postinst() {
+
+	# do the amd module
+	# we should also download  the source while we are add it
+	einfo
+	einfo "building AMD module"
+	"${S}"/files/AMD/install.sh
+
 	einfo
 	einfo "FreeSWITCH has been successfully emerged!"
 	einfo
