@@ -269,6 +269,10 @@ fs_set_module() {
 		;;
 	esac
 
+	# enable the amd moduleeinfo "
+	einfo "  -- enabling mod_amd"
+	echo "applications/mod_amd" >> "${config}"
+	;;
 	return 0
 }
 
