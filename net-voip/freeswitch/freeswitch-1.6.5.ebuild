@@ -33,7 +33,7 @@ FM_APPLICATIONS="
 	http_cache ladspa lcr +limit memcache mongo nibblebill
 	osp rad_auth random redis rss skel +sms snapshot
 	snom soundtouch +spandsp spy stress +valet_parking vmd
-	+voicemail voicemail_ivr
+	+voicemail voicemail_ivr amd
 "
 FM_TTS="
 	cepstral flite pocketsphinx tts_commandline unimrcp
