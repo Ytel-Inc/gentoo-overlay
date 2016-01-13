@@ -9,6 +9,7 @@ FREESWITCH_PID="/var/run/freeswitch/freeswitch.pid"
 
 do_setlimits() {
         einfo "setting general limits"
+        ulimit -e 60
         ulimit -c unlimited
         ulimit -d unlimited
         ulimit -f unlimited
@@ -41,12 +42,13 @@ start() {
         fi
 
         einfo "setting LUA path"
-        export LUA_PATH='/usr/share/freeswitch/scripts/?.lua;\;/root/.luarocks/share/lua/5.2/?.lua;/root/.luarocks/share/lua/5.2/?/init.lua;/usr/lib64/lua/luarocks/share/lua/5.2/?.lua;/usr/lib64/lua/luarocks/share/lua/5.2/?/init.lua;./?.lua;/usr/share/lua/5.2/?.lua;/usr/share/lua/5.2/?/init.lua;/usr/lib64/lua$
+        export LUA_PATH='/usr/share/freeswitch/scripts/?.lua;\;/root/.luarocks/share/lua/5.2/?.lua;/root/.luarocks/share/lua/5.2/?/init.lua;/usr/lib64/lua/luarocks/share/lua/5.2/?.lua;/usr/lib64/lua/luarocks/share/lua/5.2/?/init.lua;./?.lua;/usr/share/lua/5.2/?.lua;/usr/share/lua/5.2/?/init.lua;/usr/lib64/lua/5.2/?.lua;/usr/lib64/lua/5.2/?/init.lua'
         export LUA_CPATH='/root/.luarocks/lib/lua/5.2/?.so;/usr/lib64/lua/luarocks/lib/lua/5.2/?.so;./?.so;/usr/lib64/lua/5.2/?.so;/usr/lib64/lua/5.2/loadall.so'
 
         ebegin "Starting Freeswitch"
         do_setlimits
         checkpath -q -d `dirname ${FREESWITCH_PID}` -o ${FREESWITCH_USER}
+        #start-stop-daemon --make-pidfile --user ${FREESWITCH_USER:-freeswitch} --group ${FREESWITCH_GROUP:-freeswitch} --pidfile "${FREESWITCH_PIDFILE:-/var/run/freeswitch/freeswitch.pid}" --exec ${FREESWITCH_BIN} -- ${FREESWITCH_OPTS}
         start-stop-daemon --pidfile "${FREESWITCH_PIDFILE:-/var/run/freeswitch/freeswitch.pid}" --exec ${FREESWITCH_BIN} -- -u  ${FREESWITCH_USER:-freeswitch} -g ${FREESWITCH_GROUP:-freeswitch} -ncwait -nonat
         eend $?
 }
