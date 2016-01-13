@@ -400,6 +400,11 @@ src_configure() {
 
 	use debug || config_opts="${config_opts} --disable-debug"
 
+	if use debug; then
+		export CFLAGS="-g -ggdb"
+		export MOD_CFLAGS="-g -ggdb"
+	fi
+	
 	einfo "Configuring FreeSWITCH..."
 		touch noreg
 		FREESWITCH_HTDOCS="${FREESWITCH_HTDOCS:-/var/www/localhost/htdocs/${PN}}"
