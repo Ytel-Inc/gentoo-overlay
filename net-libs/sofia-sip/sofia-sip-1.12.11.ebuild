@@ -3,6 +3,7 @@
 # $Id$
 
 EAPI=4
+inherit base eutils flag-o-matic linux-info multilib
 
 DESCRIPTION="RFC3261 compliant SIP User-Agent library"
 HOMEPAGE="http://sofia-sip.sourceforge.net/"
@@ -12,9 +13,6 @@ LICENSE="LGPL-2.1+ BSD public-domain" # See COPYRIGHT
 SLOT="0"
 KEYWORDS="alpha amd64 ~arm ia64 ppc ~ppc64 sparc x86 ~x86-linux"
 IUSE="ssl static-libs"
-
-#EPATCH_SUFFIX="patch"
-#PATCHES=( "${WORKDIR}/sofia-sip-patchset" )
 
 RDEPEND="dev-libs/glib:2
 	<=sys-devel/gcc-4.7.4
@@ -26,6 +24,12 @@ DEPEND="${RDEPEND}
 RESTRICT="test"
 
 DOCS=( AUTHORS ChangeLog README README.developers RELEASE TODO )
+
+
+PATCHES=(
+	"${FILESDIR}/sofia-sip-gcc-4.8.patch"
+)
+
 
 src_configure() {
         econf \
