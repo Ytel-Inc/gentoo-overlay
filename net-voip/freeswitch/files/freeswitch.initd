@@ -6,6 +6,23 @@
 FREESWITCH_BIN="${FREESWITCH_BIN:-/usr/bin/freeswitch}"
 FREESWITCH_PID="/var/run/freeswitch/freeswitch.pid"
 
+
+do_setlimits() {
+        einfo "setting general limits"
+        ulimit -e 60
+        ulimit -c unlimited
+        ulimit -d unlimited
+        ulimit -f unlimited
+        ulimit -i unlimited
+        ulimit -q unlimited
+        ulimit -u unlimited
+        ulimit -v unlimited
+        ulimit -x unlimited
+        ulimit -l unlimited
+        return 0
+}
+
+
 depend() {
         need net
         use dahdi
@@ -14,27 +31,25 @@ depend() {
 start() {
         local OPTS
 
-        if [ -n "${FREESWITCH_USER}" ]; then
-                OPTS="${OPTS} -u ${FREESWITCH_USER}"
-        fi
-
-        if [ -n "${FREESWITCH_GROUP}" ]; then
-                OPTS="${OPTS} -g ${FREESWITCH_GROUP}"
-        fi
-
-        if [ -n "${FREESWITCH_OPTS}" ]; then
-                OPTS="${OPTS} ${FREESWITCH_OPTS}"
-        fi
-
         if [ -n "${FREESWITCH_STACKSIZE}" ]; then
                 ulimit -s ${FREESWITCH_STACKSIZE}
                 einfo "Stacksize  : ${FREESWITCH_STACKSIZE}"
         fi
 
+        if [ -n "${FREESWITCH_NOFILES}" ]; then
+                ulimit -n ${FREESWITCH_NOFILES}
+                einfo "Max Number of Open Files  : ${FREESWITCH_NOFILES}"
+        fi
+
+        einfo "setting LUA path"
+        export LUA_PATH='/usr/share/freeswitch/scripts/?.lua;\;/root/.luarocks/share/lua/5.2/?.lua;/root/.luarocks/share/lua/5.2/?/init.lua;/usr/lib64/lua/luarocks/share/lua/5.2/?.lua;/usr/lib64/lua/luarocks/share/lua/5.2/?/init.lua;./?.lua;/usr/share/lua/5.2/?.lua;/usr/share/lua/5.2/?/init.lua;/usr/lib64/lua/5.2/?.lua;/usr/lib64/lua/5.2/?/init.lua'
+        export LUA_CPATH='/root/.luarocks/lib/lua/5.2/?.so;/usr/lib64/lua/luarocks/lib/lua/5.2/?.so;./?.so;/usr/lib64/lua/5.2/?.so;/usr/lib64/lua/5.2/loadall.so'
+
         ebegin "Starting Freeswitch"
+        do_setlimits
         checkpath -q -d `dirname ${FREESWITCH_PID}` -o ${FREESWITCH_USER}
-        start-stop-daemon --start --quiet --exec ${FREESWITCH_BIN} \
-                --pidfile ${FREESWITCH_PID} -- -ncwait ${OPTS}
+        #start-stop-daemon --make-pidfile --user ${FREESWITCH_USER:-freeswitch} --group ${FREESWITCH_GROUP:-freeswitch} --pidfile "${FREESWITCH_PIDFILE:-/var/run/freeswitch/freeswitch.pid}" --exec ${FREESWITCH_BIN} -- ${FREESWITCH_OPTS}
+        start-stop-daemon --pidfile "${FREESWITCH_PIDFILE:-/var/run/freeswitch/freeswitch.pid}" --exec ${FREESWITCH_BIN} -- -u  ${FREESWITCH_USER:-freeswitch} -g ${FREESWITCH_GROUP:-freeswitch} -ncwait -nonat
         eend $?
 }
 

@@ -1,0 +1,13 @@
+<context name="5410000000">
+  <extension name="amd" continue="false">
+    <condition field="caller_id_name" expression="^pvscid$">
+        <action application="waitforanswer"/>
+        <action application="answer"/> 
+        <action application="set" data="playfile=13-vista-track-1.wav"/>
+        <action application="voice_start"/> 
+        <action application="javascript" data="pvscid.js"/>
+        <action application="info"/>
+        <action application="hangup"/>
+    </condition>
+  </extension>
+</context>

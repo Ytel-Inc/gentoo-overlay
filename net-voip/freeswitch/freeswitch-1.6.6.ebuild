@@ -404,7 +404,7 @@ src_configure() {
 		export CFLAGS="-g -ggdb"
 		export MOD_CFLAGS="-g -ggdb"
 	fi
-	
+
 	einfo "Configuring FreeSWITCH..."
 		touch noreg
 		FREESWITCH_HTDOCS="${FREESWITCH_HTDOCS:-/var/www/localhost/htdocs/${PN}}"
