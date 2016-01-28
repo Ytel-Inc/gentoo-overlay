@@ -4,7 +4,7 @@
 
 EAPI=5
 
-EGIT_REPO_URI="https://github.com/datastax/php-driver.git"
+EGIT_REPO_URI="https://github.com/datastax/cpp-driver.git"
 
 inherit git-2 cmake-utils
 
