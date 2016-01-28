@@ -6,7 +6,7 @@ EAPI=5
 
 EGIT_REPO_URI="https://github.com/datastax/php-driver.git"
 
-inherit git-2 autotools
+inherit git-2 cmake-utils
 
 DESCRIPTION="DataStax PHP Driver for Apache Cassandra"
 HOMEPAGE="http://datastax.github.io/cpp-driver/"
@@ -19,14 +19,10 @@ IUSE=""
 DEPEND="dev-libs/libuv"
 RDEPEND="${DEPEND}"
 
-src_prepare() {
-	eautoreconf
-}
-
 src_configure() {
-	econf
+	cmake-utils_src_configure
 }
 
 src_install() {
-	emake install DESTDIR="${D}" || die
+	cmake-utils_src_install
 }
