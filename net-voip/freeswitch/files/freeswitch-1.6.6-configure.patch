@@ -1,0 +1,54 @@
+Index: libs/spandsp/configure.ac
+===================================================================
+diff -u -N -rc74237ad3cbd1974ae70f1a8d0d5d2cfe4d7b446 -r10df60039322b3903e62b001971c195d5ce48943
+--- libs/spandsp/configure.ac	(.../configure.ac)	(revision c74237ad3cbd1974ae70f1a8d0d5d2cfe4d7b446)
++++ libs/spandsp/configure.ac	(.../configure.ac)	(revision 10df60039322b3903e62b001971c195d5ce48943)
+@@ -37,6 +37,7 @@
+ m4_include(m4/ax_check_export_capability.m4)
+ m4_include(m4/ax_check_arm_neon.m4)
+ m4_include(m4/ax_func_aligned_alloc.m4)
++m4_include(m4/memmove.m4)
+
+ AC_CONFIG_SRCDIR([src/tone_generate.c])
+ AC_CONFIG_AUX_DIR([config])
+@@ -152,6 +153,7 @@
+ AC_FUNC_VPRINTF
+ AC_FUNC_MEMCMP
+ AC_FUNC_MEMMOVE
++
+ if test "${ax_cv_c_compiler_vendor}" = "gnu"
+   then
+     AC_FUNC_REALLOC
+Index: libs/spandsp/m4/memmove.m4
+===================================================================
+diff -u -N
+--- libs/spandsp/m4/memmove.m4	(revision 0)
++++ libs/spandsp/m4/memmove.m4	(revision 10df60039322b3903e62b001971c195d5ce48943)
+@@ -0,0 +1,27 @@
++AC_DEFUN([AC_FUNC_MEMMOVE],
++[AC_CHECK_FUNCS(memmove)
++AC_MSG_CHECKING(for working memmove)
++AC_CACHE_VAL(ac_cv_have_working_memmove,
++[AC_TRY_RUN(
++[#include <stdio.h>
++
++int main(void)
++{
++    char buf[10];
++    strcpy (buf, "01234567");
++    memmove (buf, buf + 2, 3);
++    if (strcmp (buf, "23434567"))
++        exit (1);
++    strcpy (buf, "01234567");
++    memmove (buf + 2, buf, 3);
++    if (strcmp (buf, "01012567"))
++        exit (1);
++    exit (0);
++}], ac_cv_have_working_memmove=yes, ac_cv_have_working_memmove=no, ac_cv_have_working_memmove=cross)])
++AC_MSG_RESULT([$ac_cv_have_working_memmove])
++if test x$ac_cv_have_working_memmove != "xyes"; then
++  AC_LIBOBJ(memmove)
++  AC_MSG_WARN([Replacing missing/broken memmove.])
++  AC_DEFINE(PREFER_PORTABLE_MEMMOVE, 1, "enable replacement memmove if system memmove is broken or missing")
++fi])
++

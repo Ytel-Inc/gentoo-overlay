@@ -21,7 +21,7 @@ LANGS="de en es es_ar fa fr he hr hu it ja nl pl pt ru sv th zh"
 
 FREETDM_MODULES="
 	libpri misdn r2 sng_isdn sng_ss7 wanpipe
-"
+"cd net
 
 ESL="perl python lua java managed"
 
@@ -365,6 +365,7 @@ esl_doperlmod() {
 src_prepare() {
 	# disable -Werror
 	epatch "${FILESDIR}/${P}-no-werror.patch"
+	epatch "${FILESDIR}/${P}-configure.patch"
 	# Fix broken libtool?
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr/Makefile.in"
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr-util/Makefile.in"
