@@ -1,6 +1,6 @@
 #!/sbin/runscript
 
-NAME=cassandra
+NAME=cassandra-2.1
 DESC="Apache Cassandra"
 PIDFILE=/var/run/$NAME/$NAME.pid
 
