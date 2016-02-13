@@ -37,6 +37,7 @@ janus_run_loop() {
         local result=0 signal=0
 
         pid_file="/var/run/${SVCNAME}.pid"
+        janus_log_file="/var/log/${SVCNAME}.log"
 
         echo "Initializing $(janus_svcname) wrapper"
 
@@ -52,7 +53,7 @@ janus_run_loop() {
 
 		cd /etc/janus
 
-		/usr/bin/janus -F${JANUS_CNF_PATH} ${JANUS_OPTS} -N -L /var/log/janus.log -p ${pid_file}
+		/usr/bin/janus -F${JANUS_CNF_PATH} ${JANUS_OPTS} -N -L ${janus_log_file} -p ${pid_file}
 		result=$?
 
                 if [ "$result" -eq 0 ]; then
@@ -121,10 +122,6 @@ start() {
                 eerror "Cannot read the configuration file \`${JANUS_CNF_PATH}/janus.cfg'"
                 return 1
         fi
-
-#        start-stop-daemon --start --exec /usr/bin/janus \
-#                --background \
-#                -- -F${JANUS_CNF_PATH} -N -L /var/log/janus.log -p ${pid_file}
 
         janus_run_loop &
         result=$?

@@ -3,14 +3,11 @@
 #
 # Value: Email address or empty to disable
 #
-#JANUS_NOTIFY_EMAIL="root"
+JANUS_NOTIFY_EMAIL="engineering\@ytel.com"
 
-#
-# ASTERISK_CORE_DIR
-#
 # Value: Directory (will be created if non-existant), default is /tmp
 #
-JANUS_CORE_DIR="/etc/janus"
+JANUS_CORE_DIR="/tmp"
 
 
 #
