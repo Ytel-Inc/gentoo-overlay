@@ -37,7 +37,7 @@ janus_run_loop() {
         local result=0 signal=0
 
         pid_file="/var/run/${SVCNAME}.pid"
-        janus_log_file="/var/log/${SVCNAME}.log"
+        janus_log_file="/var/log/janus/${SVCNAME}.log"
 
         echo "Initializing $(janus_svcname) wrapper"
 

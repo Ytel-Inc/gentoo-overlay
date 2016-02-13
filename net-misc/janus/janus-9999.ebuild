@@ -8,7 +8,7 @@ inherit autotools base eutils multilib user systemd git-2 flag-o-matic
 DESCRIPTION="Janus WebRTC Gateway: Janus is an open source, general purpose, WebRTC gateway designed and developed by Meetecho."
 HOMEPAGE="http://janus.conf.meetecho.com/"
 EGIT_REPO_URI="https://github.com/meetecho/janus-gateway.git"
-#SRC_URI="https://github.com/meetecho/janus-gateway/archive/master.tar.gz"
+
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 x86"
@@ -59,12 +59,14 @@ src_compile() {
 
 src_install() {
 
-        mkdir -p "${D}"/etc/janus
+  mkdir -p "${D}"/etc/janus
+	mkdir -p "${D}"/var/log/janus
 
-        dodir /usr/sbin
+  dodir /usr/sbin
 
-        newinitd "${FILESDIR}"/janus-initd janus || die "newinitd failed"
-        newconfd "${FILESDIR}"/janus-confd janus || die "newconfd failed"
+
+  newinitd "${FILESDIR}"/janus-initd janus || die "newinitd failed"
+  newconfd "${FILESDIR}"/janus-confd janus || die "newconfd failed"
 
 	emake DESTDIR="${D}" installdirs
 	emake DESTDIR="${D}" install
