@@ -122,7 +122,7 @@ RDEPEND="virtual/libc
 	libedit? ( dev-libs/libedit )
 	odbc? ( dev-db/unixODBC )
 	esl_java? ( >=virtual/jre-1.5:* )
-	esl_lua? ( || ( dev-lang/lua:5.1 dev-lang/luajit:2 ) )
+	esl_lua? ( || ( dev-lang/lua dev-lang/luajit:2 ) )
 	esl_managed? ( >=dev-lang/mono-1.9 )
 	esl_perl? ( dev-lang/perl )
 	esl_python? ( dev-lang/python:2.7 )

@@ -4,6 +4,8 @@
 
 extra_started_commands="forcestop"
 
+ulimit -c unlimited
+
 janus_svcname() {
         local ebextra=
         case "${SVCNAME}" in
@@ -18,7 +20,7 @@ janus_svcname() {
 is_running() {
 
 	pid_file="/var/run/${SVCNAME}.pid"
-                
+
         [ -r "${pid_file}" ] || return 1
         PID="$(cat "${pid_file}")"
         [ -d "/proc/${PID}" ] || return 1
@@ -37,7 +39,7 @@ janus_run_loop() {
         pid_file="/var/run/${SVCNAME}.pid"
 
         echo "Initializing $(janus_svcname) wrapper"
-        
+
         trap "rm -f '/var/run/janus_wrapper_loop.running'" EXIT
         touch "/var/run/janus_wrapper_loop.running"
 
@@ -48,7 +50,9 @@ janus_run_loop() {
 
 	        JANUS_CNF_PATH="${JANUS_CNF_PATH:-/etc/${SVCNAME}}"
 
-		/usr/bin/janus -F${JANUS_CNF_PATH} -N -L /var/log/janus.log -p ${pid_file}
+		cd /etc/janus
+
+		/usr/bin/janus -F${JANUS_CNF_PATH} ${JANUS_OPTS} -N -L /var/log/janus.log -p ${pid_file}
 		result=$?
 
                 if [ "$result" -eq 0 ]; then
@@ -106,6 +110,7 @@ start() {
 	pid_file="/var/run/${SVCNAME}.pid"
 
 	ulimit -c unlimited
+	ulimit -n 64000
 
 	export G_MESSAGES_DEBUG=false
 	export NICE_DEBUG=false
@@ -118,10 +123,10 @@ start() {
         fi
 
 #        start-stop-daemon --start --exec /usr/bin/janus \
-#                --pidfile ${pid_file} --make-pidfile --background \
-#                -- -F${JANUS_CNF_PATH} -N -L /var/log/janus.log
+#                --background \
+#                -- -F${JANUS_CNF_PATH} -N -L /var/log/janus.log -p ${pid_file}
 
-        janus_run_loop 2>&1 | logger -t "wrapper:$(janus_svcname)" &
+        janus_run_loop &
         result=$?
 
         if [ $result -eq 0 ]; then
@@ -187,4 +192,3 @@ stop() {
         eend 0
 
 }
-
