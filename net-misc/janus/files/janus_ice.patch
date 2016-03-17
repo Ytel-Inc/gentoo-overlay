@@ -1,0 +1,39 @@
+--- janus-gateway/ice.c	2016-03-16 17:10:09.000000000 -0700
++++ janus-patched/ice.c	2016-03-16 17:37:03.000000000 -0700
+@@ -1313,17 +1313,25 @@
+ 		return;
+ 	}
+ 	component->state = state;
+-	if((state == NICE_COMPONENT_STATE_CONNECTED || state == NICE_COMPONENT_STATE_READY)
+-			&& handle->send_thread == NULL) {
+-		/* Start the outgoing data thread */
+-		GError *error = NULL;
+-		handle->send_thread = g_thread_try_new("ice send thread", &janus_ice_send_thread, handle, &error);
+-		if(error != NULL) {
+-			/* FIXME We should clear some resources... */
+-			JANUS_LOG(LOG_ERR, "[%"SCNu64"] Got error %d (%s) trying to launch the ICE send thread...\n", handle->handle_id, error->code, error->message ? error->message : "??");
+-			return;
+-		}
+-	}
++  if(state == NICE_COMPONENT_STATE_CONNECTED || state == NICE_COMPONENT_STATE_READY) {
++    /* NOTICE: can't use handle->mutex in this function, janus_process_incoming_request --> janus_ice_trickle_parse locked it */
++    if(!g_atomic_int_compare_and_exchange(&handle->send_thread_creating, 0, 1)) {
++      return;
++    }
++    if(handle->send_thread == NULL) {
++      /* Start the outgoing data thread */
++      GError *error = NULL;
++      handle->send_thread = g_thread_try_new("ice send thread", &janus_ice_send_thread, handle, &error);
++      if(error != NULL) {
++        /* FIXME We should clear some resources... */
++        JANUS_LOG(LOG_ERR, "[%"SCNu64"] Got error %d (%s) trying to launch the ICE send thread...\n", handle->handle_id, error->code, error->message ? error->message : "??");
++        janus_mutex_unlock(&handle->mutex);
++      }
++    }
++    g_atomic_int_set(&handle->send_thread_creating, 0);
++    return;
++  }
++  
+ 	/* FIXME Even in case the state is 'connected', we wait for the 'new-selected-pair' callback to do anything */
+ 	if(state == NICE_COMPONENT_STATE_FAILED) {
+ 		/* Failed doesn't mean necessarily we need to give up: we may be trickling */
