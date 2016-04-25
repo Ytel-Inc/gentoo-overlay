@@ -12,7 +12,7 @@ EGIT_REPO_URI="https://github.com/meetecho/janus-gateway.git"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 x86"
-IUSE="websockets rabbitmq docs opus ogg data-channels"
+IUSE="websockets rabbitmq docs opus ogg data-channels plugin-audiobridge plugin-recordplay plugin-sip plugin-videoroom plugin-voicemail post-processing plugin-videocall"
 
 DEPEND="docs? ( app-doc/doxygen media-gfx/graphviz )
 	opus? ( media-libs/opus )
@@ -43,13 +43,19 @@ src_configure() {
 
 	export PKG_CONFIG_PATH="${PKG_CONFIG_PATH}:/usr/local/lib/pkgconfig"
 
-		#--disable-data-channels \
-	econf \
-		--prefix=/usr \
-		$(use_enable websockets) \
-		$(use_enable rabbitmq) \
-		$(use_enable data-channels) \
-		$(use_enable docs)
+		econf \
+			--prefix=/usr \
+			$(use_enable websockets) \
+			$(use_enable rabbitmq) \
+			$(use_enable data-channels) \
+			$(use_enable plugin-audiobridge) \
+			$(use_enable plugin-recordplay) \
+			$(use_enable plugin-sip) \
+			$(use_enable plugin-videoroom) \
+			$(use_enable plugin-voicemail) \
+			$(use_enable post-processing) \
+			$(use_enable plugin-videocall) \
+			$(use_enable docs)
 }
 
 src_compile() {

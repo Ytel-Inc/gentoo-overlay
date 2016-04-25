@@ -121,8 +121,7 @@ RDEPEND="virtual/libc
 	>=media-libs/speex-1.2_rc1
 	libedit? ( dev-libs/libedit )
 	odbc? ( dev-db/unixODBC )
-	java? ( virtual/jre virtual/jdk dev-java/gcj-jdk )
-	esl_java? ( virtual/jre )
+	esl_java? ( >=virtual/jre-1.5:* )
 	esl_lua? ( || ( dev-lang/lua dev-lang/luajit:2 ) )
 	esl_managed? ( >=dev-lang/mono-1.9 )
 	esl_perl? ( dev-lang/perl )
