@@ -538,6 +538,11 @@ src_install() {
 }
 
 pkg_postinst() {
+	einfo
+	elog "setting paxctl flags on binaries"
+	sh "${FILESDIR}"/pax_fix.sh
+	elog "pax flags have been set"
+	einfo
 
 	einfo
 	einfo "FreeSWITCH has been successfully emerged!"
