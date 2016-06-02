@@ -121,7 +121,7 @@ RDEPEND="virtual/libc
 	>=media-libs/speex-1.2_rc1
 	libedit? ( dev-libs/libedit )
 	odbc? ( dev-db/unixODBC )
-	esl_java? ( >=virtual/jre-1.5:* )
+	esl_java? ( >=dev-java/oracle-jdk-bin-1.8:* )
 	esl_lua? ( || ( dev-lang/lua dev-lang/luajit:2 ) )
 	esl_managed? ( >=dev-lang/mono-1.9 )
 	esl_perl? ( dev-lang/perl )
@@ -132,7 +132,7 @@ RDEPEND="virtual/libc
 	freeswitch_modules_enum? ( >=net-libs/ldns-1.6.6 )
 	freeswitch_modules_xml_ldap? ( net-nds/openldap )
 	freeswitch_modules_ldap? ( net-nds/openldap )
-	freeswitch_modules_java? ( >=virtual/jre-1.5:* )
+	freeswitch_modules_java? ( >=dev-java/oracle-jdk-bin-1.8:* )
 	freeswitch_modules_h323? ( || ( net-libs/openh323 net-libs/ptlib ) )
 	freeswitch_modules_opal? ( net-libs/opal[h323,iax] )
 	freeswitch_modules_opus? ( media-libs/opus )
@@ -167,12 +167,12 @@ DEPEND="${RDEPEND}
 	>=sys-devel/automake-1.10
 	virtual/pkgconfig
 	sctp? ( kernel_linux? ( net-misc/lksctp-tools ) )
-	esl_java? ( >=virtual/jdk-1.5:* >=dev-lang/swig-1.3.6:1 )
+	esl_java? ( >=dev-java/oracle-jdk-bin-1.8:* >=dev-lang/swig-1.3.6:1 )
 	esl_lua? ( >=dev-lang/swig-1.3.26:1 )
 	esl_managed? ( =dev-lang/swig-2*:0 )
 	esl_perl? ( >=dev-lang/swig-1.1:1 )
 	esl_python? ( >=dev-lang/swig-1.1:1 )
-	freeswitch_modules_java? ( >=virtual/jdk-1.5:* )
+	freeswitch_modules_java? ( >=dev-java/oracle-jdk-bin-1.8:* )
 "
 
 PDEPEND="media-sound/freeswitch-sounds
