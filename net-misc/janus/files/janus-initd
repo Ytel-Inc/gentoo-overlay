@@ -1,10 +1,14 @@
 #!/sbin/runscript
-# Copyright 1999-2014 Gentoo Foundation
+# Copyright 1999-2013 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
+# $Header: $
 
-extra_started_commands="forcestop"
+JANUS_BIN="${JANUS_BIN:-/usr/bin/janus}"
 
-ulimit -c unlimited
+depend() {
+  need net
+}
+
 
 janus_svcname() {
         local ebextra=
@@ -15,177 +19,65 @@ janus_svcname() {
         echo "${SVCNAME}${ebextra}"
 }
 
-
-
-is_running() {
-
-	pid_file="/var/run/${SVCNAME}.pid"
-
-        [ -r "${pid_file}" ] || return 1
-        PID="$(cat "${pid_file}")"
-        [ -d "/proc/${PID}" ] || return 1
-        EXE="$(readlink -f /proc/${PID}/exe)"
-        EXE="${EXE% (deleted)}" # in case janus got upgraded and we're still looking at an old one.
-        [ "${EXE}" = /usr/bin/janus ] || return 1 # pid got re-used for another process.
-
-        # PID reported in pidfile is active, and is still an janus instance.
+do_setlimits() {
+        einfo "setting general limits"
+        ulimit -e 60
+        ulimit -c unlimited
+        ulimit -d unlimited
+        ulimit -f unlimited
+        ulimit -i unlimited
+        ulimit -q unlimited
+        ulimit -u unlimited
+        ulimit -v unlimited
+        ulimit -x unlimited
+        ulimit -l unlimited
+        ulimit -s unlimited
         return 0
 }
 
-
-janus_run_loop() {
-        local result=0 signal=0
-
-        pid_file="/var/run/${SVCNAME}.pid"
-        janus_log_file="/var/log/janus/${SVCNAME}.log"
-
-        echo "Initializing $(janus_svcname) wrapper"
-
-        trap "rm -f '/var/run/janus_wrapper_loop.running'" EXIT
-        touch "/var/run/janus_wrapper_loop.running"
-
-        while [ -r "/var/run/janus_wrapper_loop.running" ]; do
-
-	        export G_MESSAGES_DEBUG=false
-	        export NICE_DEBUG=false
-
-	        JANUS_CNF_PATH="${JANUS_CNF_PATH:-/etc/${SVCNAME}}"
-
-		cd /etc/janus
-
-		/usr/bin/janus -F${JANUS_CNF_PATH} ${JANUS_OPTS} -N -L ${janus_log_file} -p ${pid_file}
-		result=$?
-
-                if [ "$result" -eq 0 ]; then
-                        echo "Janus terminated normally"
-                        break
-                else
-                        if [ "$result" -gt 128 ]; then
-                                signal="$(expr "$result" - 128)"
-                                MSG="Janus terminated with Signal: $signal"
-
-                                CORE_TARGET="core-$(date "+%Y%m%d-%H%M%S")"
-
-                                local CORE_DUMPED=0
-                                if [ -f "${JANUS_CORE_DIR}/core" ]; then
-                                        mv "${JANUS_CORE_DIR}/core" \
-                                           "${JANUS_CORE_DIR}/${CORE_TARGET}"
-                                        CORE_DUMPED=1
-
-                                elif [ -f "${JANUS_CORE_DIR}/core.${PID}" ]; then
-                                        mv "${JANUS_CORE_DIR}/core.${PID}" \
-                                           "${JANUS_CORE_DIR}/${CORE_TARGET}"
-                                        CORE_DUMPED=1
-
-                                fi
-
-                                [ $CORE_DUMPED -eq 1 ] && \
-                                        MSG="${MSG}\n\rCore dumped: ${JANUS_CORE_DIR}/${CORE_TARGET}"
-                        else
-                                MSG="Janus terminated with return code: $result"
-                        fi
-
-                        # kill left-over tasks
-                        for X in ${JANUS_CLEANUP_ON_CRASH}; do
-                                kill -9 "${PID}";
-                        done
-                fi
-
-                if [ -n "${JANUS_NOTIFY_EMAIL}" ] && \
-                   [ -x /usr/sbin/sendmail ]; then
-                        echo -e -n "Subject: Janus crashed\r\n${MSG}\r\n" |\
-                                 /usr/sbin/sendmail "${JANUS_NOTIFY_EMAIL}"
-                fi
-                sleep "${JANUS_RESTART_DELAY}"
-                echo "Restarting Janus..."
-        done
-
-        echo "Terminating wrapper loop."
-        return 0
-}
-
+# /usr/bin/janus -F${JANUS_CNF_PATH} ${JANUS_OPTS} -N -L ${janus_log_file} -p ${pid_file}
 start() {
+    ebegin "Starting $(janus_svcname)"
 
-        ebegin "Starting $(janus_svcname)"
+    JANUS_PID_FILE="/var/run/${SVCNAME}.pid"
+    JANUS_CNF_PATH="${JANUS_CNF_PATH:-/etc/${SVCNAME}}"
+    JANUS_LOG_FILE="/var/log/janus/${SVCNAME}.log"
 
-	pid_file="/var/run/${SVCNAME}.pid"
+    if [ ! -r "${JANUS_CNF_PATH}/janus.cfg" ] ; then
+            eerror "Cannot read the configuration file \`${JANUS_CNF_PATH}/janus.cfg'"
+            return 1
+    fi
 
-	ulimit -c unlimited
-	ulimit -n 64000
-
-	export G_MESSAGES_DEBUG=false
-	export NICE_DEBUG=false
-
-        JANUS_CNF_PATH="${JANUS_CNF_PATH:-/etc/${SVCNAME}}"
-
-        if [ ! -r "${JANUS_CNF_PATH}/janus.cfg" ] ; then
-                eerror "Cannot read the configuration file \`${JANUS_CNF_PATH}/janus.cfg'"
-                return 1
-        fi
-
-        janus_run_loop &
-        result=$?
-
-        if [ $result -eq 0 ]; then
-                # 2 seconds should be enough for janus to start
-                sleep 2
-                is_running
-                result=$?
-
-                [ $result -eq 0 ] || wrapperstop
-        fi
+    # set the limits
+    do_setlimits
 
 
+    start-stop-daemon --wait ${JANUS_RESTART_WAIT} \
+    --background --start --exec \
+    ${JANUS_BIN} \
+    --make-pidfile --pidfile ${JANUS_PID_FILE} \
+    -- -F ${JANUS_CNF_PATH} ${JANUS_OPTS} -N -L ${JANUS_LOG_FILE}
+    eend $?
 }
 
-wrapperstop() {
-        # Accomodate system upgrades (so a previous version of the wrapper script that still uses a pid file may be running).
-        if [ -r "/var/run/janus_wrapper_loop.pid" ]; then
-                ebegin "Killing janus wrapper script"
-                kill "$(cat /var/run/janus_wrapper_loop.pid)"
-                eend $?
-        fi
-
-        # The new one (due to "hardened" requirements) uses a simpler
-        # flag to indicate running or shutting down.
-        if [ -r "/var/run/janus_wrapper_loop.running" ]; then
-                ebegin "Signalling wrapper script to terminate"
-                rm "/var/run/janus_wrapper_loop.running"
-                eend $?
-        fi
-
-        return 0
-}
 
 stop() {
+    ebegin "Stopping $(janus_svcname)"
 
-        ebegin "Stopping $(janus_svcname)"
+    JANUS_PID_FILE="/var/run/${SVCNAME}.pid"
+    JANUS_CNF_PATH="${JANUS_CNF_PATH:-/etc/${SVCNAME}}"
+    JANUS_LOG_FILE="/var/log/janus/${SVCNAME}.log"
 
-	wrapperstop
+    start-stop-daemon --wait ${JANUS_RESTART_WAIT} \
+    --stop --exec ${JANUS_BIN} \
+    --pidfile ${JANUS_PID_FILE}
+    eend $?
+}
 
-	pid_file="/var/run/${SVCNAME}.pid"
-
-        if is_running; then
-                einfon "Waiting for janus to shutdown ."
-                local cnt=0
-                while is_running; do
-                        cnt="$(expr $cnt + 1)"
-                        if [ $cnt -gt 5 ] ; then
-
-                                start-stop-daemon --stop --pidfile ${pid_file}
-                                return
-                        fi
-                        if [ $cnt -gt 60 ] ; then
-                                # Waited 120 seconds now. Fail.
-                                echo
-                                eend 1 "Failed."
-                                return
-                        fi
-                        sleep 2
-                        echo -n "."
-                done
-                echo
-        fi
-        eend 0
-
+reload() {
+    ebegin "Reloading myApp"
+    start-stop-daemon --exec ${JANUS_BIN} \
+    --pidfile ${JANUS_PID_FILE} \
+    -s 1
+    eend $?
 }

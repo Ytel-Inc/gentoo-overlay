@@ -1,22 +1,8 @@
-# Send crash notifications emails to this address
-# (needs a working mail service and /usr/sbin/sendmail to do so (e.g. ssmtp))
-#
-# Value: Email address or empty to disable
-#
-JANUS_NOTIFY_EMAIL="engineering\@ytel.com"
-
-# Value: Directory (will be created if non-existant), default is /tmp
-#
-JANUS_CORE_DIR="/tmp"
-
-
-#
-# Delay time before restarting janus after a crash.
+# wait time before considering janus has started
 #
 # Value: Number of seconds to sleep after a crash before restarting.
 #
-JANUS_RESTART_DELAY=5
+JANUS_RESTART_WAIT=500
 
-# use this if you like to enable the safe wrapper script
-#JANUS_OPTS="-b"
+# enable background
 JANUS_OPTS=""
