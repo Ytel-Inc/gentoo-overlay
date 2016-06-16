@@ -168,7 +168,7 @@ DEPEND="${RDEPEND}
 	virtual/pkgconfig
 	sctp? ( kernel_linux? ( net-misc/lksctp-tools ) )
 	esl_java? ( >=dev-java/oracle-jdk-bin-1.8:* >=dev-lang/swig-1.3.6:1 )
-	esl_lua? ( >=dev-lang/swig-1.3.26:1 )
+	esl_lua? ( dev-lang/lua >=dev-lang/swig-1.3.26:1 )
 	esl_managed? ( =dev-lang/swig-2*:0 )
 	esl_perl? ( >=dev-lang/swig-1.1:1 )
 	esl_python? ( >=dev-lang/swig-1.1:1 )
