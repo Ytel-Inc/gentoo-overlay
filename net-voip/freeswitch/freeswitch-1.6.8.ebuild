@@ -166,6 +166,7 @@ DEPEND="${RDEPEND}
 	>=sys-devel/autoconf-2.60
 	>=sys-devel/automake-1.10
 	virtual/pkgconfig
+	dev-lang/lua
 	sctp? ( kernel_linux? ( net-misc/lksctp-tools ) )
 	esl_java? ( >=dev-java/oracle-jdk-bin-1.8:* >=dev-lang/swig-1.3.6:1 )
 	esl_lua? ( dev-lang/lua >=dev-lang/swig-1.3.26:1 )
