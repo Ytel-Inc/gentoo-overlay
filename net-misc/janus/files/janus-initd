@@ -14,25 +14,15 @@ janus_svcname() {
         local ebextra=
         case "${SVCNAME}" in
                 janus*) ;;
-                *) ebextra=" (janus)" ;;
+                *) ebextra=" ``(janus)" ;;
         esac
         echo "${SVCNAME}${ebextra}"
 }
 
 do_setlimits() {
         einfo "setting general limits"
-        ulimit -e 60
         ulimit -c unlimited
-        ulimit -d unlimited
-        ulimit -f unlimited
-        ulimit -i unlimited
-        ulimit -q unlimited
-        ulimit -u unlimited
-        ulimit -v unlimited
-        ulimit -x unlimited
-        ulimit -l unlimited
-        ulimit -s unlimited
-        return 0
+        ulimit -n 64000
 }
 
 # /usr/bin/janus -F${JANUS_CNF_PATH} ${JANUS_OPTS} -N -L ${janus_log_file} -p ${pid_file}
