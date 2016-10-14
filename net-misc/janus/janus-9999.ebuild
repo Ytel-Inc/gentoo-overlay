@@ -12,13 +12,14 @@ EGIT_REPO_URI="https://github.com/meetecho/janus-gateway.git"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 x86"
-IUSE="websockets rabbitmq docs opus ogg data-channels plugin-audiobridge plugin-recordplay plugin-sip plugin-videoroom plugin-voicemail post-processing plugin-videocall"
+IUSE="websockets rabbitmq mqtt docs opus ogg data-channels plugin-audiobridge plugin-recordplay plugin-sip plugin-videoroom plugin-voicemail post-processing plugin-videocall"
 
 DEPEND="docs? ( app-doc/doxygen media-gfx/graphviz )
 	opus? ( media-libs/opus )
 	ogg? ( media-libs/libogg )
 	websockets? ( net-libs/libwebsockets dev-util/cmake )
 	rabbitmq? ( net-libs/rabbitmq-c )
+  mqtt? ( dev-python/paho-mqtt )
 	data-channels? ( net-libs/usrsctp )
 	net-libs/libmicrohttpd
 	dev-libs/jansson
@@ -47,6 +48,7 @@ src_configure() {
 			--prefix=/usr \
 			$(use_enable websockets) \
 			$(use_enable rabbitmq) \
+      $(use_enable mqtt) \
 			$(use_enable data-channels) \
 			$(use_enable plugin-audiobridge) \
 			$(use_enable plugin-recordplay) \
