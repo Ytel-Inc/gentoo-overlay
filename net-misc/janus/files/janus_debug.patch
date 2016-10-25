@@ -1,0 +1,106 @@
+diff -ruN janus-gateway/transports/janus_http.c janus-patched/transports/janus_http.c
+--- janus-gateway/transports/janus_http.c	2016-10-25 15:12:06.000000000 -0700
++++ janus-patched/transports/janus_http.c	2016-10-25 15:19:09.000000000 -0700
+@@ -20,7 +20,7 @@
+  * case you're interested in HTTPS support, it's better to just rely on
+  * HTTP in Janus, and put a frontend like Apache HTTPD or nginx to take
+  * care of securing the traffic. More details are available in \ref deploy.
+- * 
++ *
+  * \ingroup transports
+  * \ref transports
+  */
+@@ -162,7 +162,7 @@
+ /* MHD Web Server */
+ static struct MHD_Daemon *ws = NULL, *sws = NULL;
+ static char *ws_path = NULL;
+-static char *cert_pem_bytes = NULL, *cert_key_bytes = NULL; 
++static char *cert_pem_bytes = NULL, *cert_key_bytes = NULL;
+ 
+ /* Admin/Monitor MHD Web Server */
+ static struct MHD_Daemon *admin_ws = NULL, *admin_sws = NULL;
+@@ -793,7 +793,7 @@
+ 	janus_config_destroy(config);
+ 	config = NULL;
+ 	if(!ws && !sws && !admin_ws && !admin_sws) {
+-		JANUS_LOG(LOG_FATAL, "No HTTP/HTTPS server started, giving up...\n"); 
++		JANUS_LOG(LOG_FATAL, "No HTTP/HTTPS server started, giving up...\n");
+ 		return -1;	/* No point in keeping the plugin loaded */
+ 	}
+ 	http_janus_api_enabled = ws || sws;
+@@ -812,7 +812,7 @@
+ 		JANUS_LOG(LOG_ERR, "Got error %d (%s) trying to launch the HTTP/Janus sessions watchdog thread...\n", error->code, error->message ? error->message : "??");
+ 		return -1;
+ 	}
+-	
++
+ 	/* Done */
+ 	g_atomic_int_set(&initialized, 1);
+ 	JANUS_LOG(LOG_INFO, "%s initialized!\n", JANUS_REST_NAME);
+@@ -1200,13 +1200,13 @@
+ 		/* Turn this into a fake "info" request */
+ 		method = "POST";
+ 		char tr[12];
+-		janus_http_random_string(12, (char *)&tr);		
++		janus_http_random_string(12, (char *)&tr);
+ 		root = json_object();
+ 		json_object_set_new(root, "janus", json_string("info"));
+ 		json_object_set_new(root, "transaction", json_string(tr));
+ 		goto parsingdone;
+ 	}
+-	
++
+ 	/* Or maybe a long poll */
+ 	if(!strcasecmp(method, "GET") || !payload) {
+ 		session_id = session_path ? g_ascii_strtoull(session_path, NULL, 10) : 0;
+@@ -1260,7 +1260,7 @@
+ 		}
+ 		/* Ok, go on with the keepalive */
+ 		char tr[12];
+-		janus_http_random_string(12, (char *)&tr);		
++		janus_http_random_string(12, (char *)&tr);
+ 		root = json_object();
+ 		json_object_set_new(root, "janus", json_string("keepalive"));
+ 		json_object_set_new(root, "session_id", json_integer(session_id));
+@@ -1344,7 +1344,7 @@
+ 		}
+ 		goto done;
+ 	}
+-	
++
+ 	json_error_t error;
+ 	/* Parse the JSON payload */
+ 	root = json_loads(payload, 0, &error);
+@@ -1580,13 +1580,13 @@
+ 		/* Turn this into a fake "info" request */
+ 		method = "POST";
+ 		char tr[12];
+-		janus_http_random_string(12, (char *)&tr);		
++		janus_http_random_string(12, (char *)&tr);
+ 		root = json_object();
+ 		json_object_set_new(root, "janus", json_string("info"));
+ 		json_object_set_new(root, "transaction", json_string(tr));
+ 		goto parsingdone;
+ 	}
+-	
++
+ 	/* Without a payload we don't know what to do */
+ 	if(!payload) {
+ 		ret = janus_http_return_error(msg, 0, NULL, JANUS_ERROR_INVALID_JSON, "Request payload missing");
+@@ -1680,7 +1680,7 @@
+ 	if(request->acrm != NULL)
+ 		g_free(request->acrm);
+ 	g_free(request);
+-	*con_cls = NULL;   
++	*con_cls = NULL;
+ }
+ 
+ /* Worker to handle notifications */
+@@ -1760,6 +1760,7 @@
+ 		}
+ 		/* FIXME Improve the Janus protocol keep-alive mechanism in JavaScript */
+ 	}
++  JANUS_LOG(LOG_INFO, "found=%s\n", found ? "true" : "false");
+ 	char *payload_text = json_dumps(max_events == 1 ? event : list, json_format);
+ 	json_decref(max_events == 1 ? event : list);
+ 	/* Finish the request by sending the response */

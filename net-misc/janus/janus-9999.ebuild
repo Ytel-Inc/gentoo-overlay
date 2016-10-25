@@ -36,6 +36,7 @@ DEPEND="docs? ( app-doc/doxygen media-gfx/graphviz )
 S="${WORKDIR}/janus-gateway-master"
 
 src_prepare() {
+  epatch "${FILESDIR}/janus_debug.patch"
 	./autogen.sh || die "Autogen script failed"
 }
 
