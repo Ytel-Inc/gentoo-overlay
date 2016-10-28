@@ -12,7 +12,7 @@ EGIT_REPO_URI="https://github.com/meetecho/janus-gateway.git"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="amd64 x86"
-IUSE="websockets rabbitmq mqtt docs opus ogg data-channels plugin-audiobridge plugin-recordplay plugin-sip plugin-videoroom plugin-voicemail post-processing plugin-videocall"
+IUSE="websockets rabbitmq mqtt debug docs opus ogg data-channels plugin-audiobridge plugin-recordplay plugin-sip plugin-videoroom plugin-voicemail post-processing plugin-videocall"
 
 DEPEND="docs? ( app-doc/doxygen media-gfx/graphviz )
 	opus? ( media-libs/opus )
@@ -36,7 +36,7 @@ DEPEND="docs? ( app-doc/doxygen media-gfx/graphviz )
 S="${WORKDIR}/janus-gateway-master"
 
 src_prepare() {
-  epatch "${FILESDIR}/janus_debug.patch"
+  use debug && epatch "${FILESDIR}/janus_debug.patch"
 	./autogen.sh || die "Autogen script failed"
 }
 
