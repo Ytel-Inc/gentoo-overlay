@@ -4,7 +4,7 @@
 
 EAPI=5
 
-PHP_EXT_NAME="php-zmq"
+PHP_EXT_NAME="zmq"
 PHP_EXT_INI="yes"
 PHP_EXT_ZENDEXT="no"
 
