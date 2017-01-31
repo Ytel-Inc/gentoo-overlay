@@ -104,8 +104,7 @@ src_install () {
 		man-prefix=${D}/usr/share/man \
 		man-dir="" \
 		doc-prefix=${D}/usr/share/doc \
-		doc-dir=${PF}
-                data-prefix=${D}/usr || die
+		doc-dir=${PF} || die
 	exeinto /etc/init.d
 	newexe ${FILESDIR}/opensips.init opensips
 
