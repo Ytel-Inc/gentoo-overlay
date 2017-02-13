@@ -7,7 +7,6 @@ inherit eutils
 DESCRIPTION="OpenSIPS - flexible and robust SIP (RFC3261) server"
 HOMEPAGE="http://www.opensips.org/"
 MY_P="${P}_src"
-P2="${P}-tls"
 SRC_URI="http://opensips.org/pub/opensips/${PV}/src/${MY_P}.tar.gz"
 
 LICENSE="GPL-2"
@@ -24,7 +23,7 @@ RDEPEND="
 	cpl? ( dev-libs/libxml2 )
 	b2bua? ( dev-libs/libxml2 )
 	presence? ( dev-libs/libxml2 )
-	unixodbc? ( >=dev-db/unixODBC-2.3.0 )"
+	unixodbc? ( >=dev-libs/unixodbc-2.2.6 )"
 
 inc_mod=""
 make_options=""
@@ -59,8 +58,7 @@ pkg_setup() {
 
 src_unpack() {
 	unpack ${MY_P}.tar.gz
-	mv ${P2} ${P}
-
+	mv ${S}-tls ${S}
 	cd ${S}
 	use ipv6 || \
 		sed -i -e "s/-DUSE_IPV6//g" Makefile.defs
@@ -81,6 +79,7 @@ src_compile() {
 	if use ssl; then
 		compile_options="TLS=1 ${compile_options}"
 	fi
+
 	emake all "${compile_options}" \
 		prefix=${ROOT}/ \
 		include_modules="${inc_mod}" \
@@ -90,27 +89,28 @@ src_compile() {
 
 src_install () {
 	local install_options
+
 	emake install \
-		prefix=${D}/ \
+		prefix=${ROOT}/ \
 		include_modules="${inc_mod}" \
-		bin-prefix=${D}/usr/sbin \
+		bin-prefix=${ROOT}/usr/sbin \
 		bin-dir="" \
-		cfg-prefix=${D}/etc \
+		cfg-prefix=${ROOT}/etc \
 		cfg-dir=opensips/ \
-		cfg-target=${D}/etc/opensips \
-		modules-prefix=${D}/usr/lib/opensips \
+		cfg-target=${ROOT}/etc/opensips \
+		modules-prefix=${ROOT}/usr/lib/opensips \
 		modules-dir=modules \
-		modules-target=${D}/usr/lib/opensips/modules/ \
-		man-prefix=${D}/usr/share/man \
+		modules-target=${ROOT}/usr/lib/opensips/modules/ \
+		man-prefix=${ROOT}/usr/share/man \
 		man-dir="" \
-		doc-prefix=${D}/usr/share/doc \
+		doc-prefix=${ROOT}/usr/share/doc \
 		doc-dir=${PF} || die
 	exeinto /etc/init.d
 	newexe ${FILESDIR}/opensips.init opensips
 
 	# fix what the Makefile don't do
-	use mysql && \
-		rm ${D}/usr/sbin/opensips_mysql.sh
+	use mysql || \
+		rm ${ROOT}/usr/sbin/opensips_mysql.sh
 }
 
 pkg_postinst() {
