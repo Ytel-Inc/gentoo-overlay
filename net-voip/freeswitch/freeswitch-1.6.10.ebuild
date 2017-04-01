@@ -3,8 +3,9 @@
 # $Id:$
 
 EAPI="5"
+PYTHON_COMPAT=( python2_7 python3_4)
 
-inherit autotools eutils flag-o-matic python user java-pkg-opt-2
+inherit autotools eutils flag-o-matic python-single-r1 user java-pkg-opt-2
 
 DESCRIPTION="FreeSWITCH telephony platform"
 HOMEPAGE="http://www.freeswitch.org/"

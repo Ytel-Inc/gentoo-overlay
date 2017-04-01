@@ -3,8 +3,9 @@
 # $Id:$
 
 EAPI="5"
+PYTHON_COMPAT=( python2_7 python3_4)
 
-inherit autotools eutils flag-o-matic python user java-pkg-opt-2
+inherit autotools eutils flag-o-matic python-single-r1 user java-pkg-opt-2
 
 DESCRIPTION="FreeSWITCH telephony platform"
 HOMEPAGE="http://www.freeswitch.org/"
@@ -232,9 +233,9 @@ pkg_setup() {
 
 		export SWIFT_HOME
 	fi
-
-	python_set_active_version 2
-	python_pkg_setup
+    python-single-r1_pkg_setup  # (matches the default)
+	#python_set_active_version 2
+	#python_pkg_setup
 
 	enewgroup "${FREESWITCH_GROUP}"
 	enewuser "${FREESWITCH_USER}" -1 -1 "/var/lib/${PN}" "${FREESWITCH_GROUP}"
