@@ -1,0 +1,26 @@
+#!/sbin/openrc-run
+# Copyright 1999-2016 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+pid_file="/run/dynomite/dynomite.pid"
+
+depend() {
+        need net
+}
+
+start_pre() {
+        checkpath -d -m 0775 -o root:root /run/zabbix
+}
+
+start() {
+        ebegin "Starting Dynomite agent"
+        start-stop-daemon --start --pidfile ${pid_file} \
+                --user root --group root --exec /usr/sbin/dynomite -- -c /etc/dynomite/dynomite.yml
+        eend $?
+}
+
+stop() {
+        ebegin "Stopping Dynomite agent"
+        start-stop-daemon  --stop --pidfile ${pid_file}
+        eend $?
+}

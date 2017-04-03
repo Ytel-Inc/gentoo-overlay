@@ -1,0 +1,21 @@
+dyn_o_mite:
+  dyn_listen: 0.0.0.0:8101
+  data_store: 0
+  listen: 0.0.0.0:8102
+  dyn_seed_provider: florida_provider
+  servers:
+    - 127.0.0.1:22122:1
+  tokens: '1383429731'
+  auto_eject_hosts: true
+  rack: null
+  distribution: vnode
+  gos_interval: 10000
+  hash: murmur
+  preconnect: true
+  server_retry_timeout: 30000
+  timeout: 5000
+  secure_server_option: datacenter
+  datacenter: us-west-2
+  read_consistency: DC_ONE
+  write_consistency: DC_ONE
+  pem_key_file: /apps/dynomite/conf/dynomite.pem
