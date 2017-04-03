@@ -3,8 +3,10 @@
 # $Id:$
 
 EAPI="5"
+PYTHON_COMPAT=( python{2_7,3_3,3_4} ) # 3.4 needs to be tested
+PYTHON_REQ_USE='threads(+)'
 
-inherit autotools eutils flag-o-matic python user java-pkg-opt-2
+inherit autotools eutils flag-o-matic python-any-r1 user java-pkg-opt-2
 
 DESCRIPTION="FreeSWITCH telephony platform"
 HOMEPAGE="http://www.freeswitch.org/"
@@ -140,7 +142,7 @@ RDEPEND="virtual/libc
 	freeswitch_modules_opus? ( media-libs/opus )
 	freeswitch_modules_osp? ( >=net-libs/osptoolkit-4.0.3 )
 	freeswitch_modules_perl? ( dev-lang/perl[ithreads] )
-	freeswitch_modules_python? ( dev-lang/python:2.7[threads] )
+	freeswitch_modules_python? ( dev-lang/python:2.7 )
 	freeswitch_modules_managed? ( >=dev-lang/mono-1.9 )
 	freeswitch_modules_sndfile? ( media-libs/libsndfile )
 	freeswitch_modules_soundtouch? ( media-libs/libsoundtouch )
@@ -170,9 +172,10 @@ DEPEND="${RDEPEND}
 	>=sys-devel/automake-1.10
 	virtual/pkgconfig
 	dev-lang/lua
+	dev-db/sqlite
 	sctp? ( kernel_linux? ( net-misc/lksctp-tools ) )
-	esl_java? ( >=dev-java/oracle-jdk-bin-1.8:* >=dev-lang/swig-1.3.6:1 )
-	esl_lua? ( dev-lang/lua >=dev-lang/swig-1.3.26:1 )
+	esl_java? ( >=dev-java/oracle-jdk-bin-1.8:* =dev-lang/swig-2*:0 )
+	esl_lua? ( dev-lang/lua =dev-lang/swig-2*:0 )
 	esl_managed? ( =dev-lang/swig-2*:0 )
 	esl_perl? ( >=dev-lang/swig-1.1:1 )
 	esl_python? ( >=dev-lang/swig-1.1:1 )
@@ -232,10 +235,7 @@ pkg_setup() {
 
 		export SWIFT_HOME
 	fi
-
-	python_set_active_version 2
-	python_pkg_setup
-
+	python-any-r1_pkg_setup
 	enewgroup "${FREESWITCH_GROUP}"
 	enewuser "${FREESWITCH_USER}" -1 -1 "/var/lib/${PN}" "${FREESWITCH_GROUP}"
 }
@@ -431,7 +431,7 @@ src_configure() {
 		--with-pkgconfigdir="/usr/$(get_libdir)/pkgconfig" \
 		$(use_enable sctp) \
 		$(use_enable zrtp) \
-		$(use_with freeswitch_modules_python python "$(PYTHON -a)") \
+		$(use_with freeswitch_modules_python python "${PYTHON}") \
 		$(use_enable resampler resample) \
 		$(use_enable odbc core-odbc-support) \
 		${java_opts} ${config_opts} || die "failed to configure FreeSWITCH"
