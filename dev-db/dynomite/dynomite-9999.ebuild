@@ -39,5 +39,5 @@ src_install() {
   default_src_install
   newinitd "${FILESDIR}"/dynomite.initd dynomite || die "newinitd failed"
 
-  cp ${FILESDIR}/dynomite.yml /etc/dynomite/
+  cp "${FILESDIR}"/dynomite.yml "${D}"/etc/dynomite/
 }
