@@ -10,6 +10,7 @@ depend() {
 
 start_pre() {
         checkpath -d -m 0775 -o redis:redis /run/dynomite
+        checkpath -d -m 0775 -o redis:redis /var/log/dynomite
 }
 
 start() {
