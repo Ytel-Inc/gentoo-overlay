@@ -13,9 +13,11 @@ EGIT_REPO_URI="https://github.com/Netflix/dynomite.git"
 
 DESCRIPTION="Dynomite built by netflix"
 HOMEPAGE="https://github.com/Netflix/dynomite"
-LICENSE="MPL-1.0"
+LICENSE="Apache"
 SLOT="0"
 KEYWORDS=""
+
+DEPEND="dev-db/redis"
 
 S="${WORKDIR}/dynomite"
 
@@ -36,6 +38,8 @@ src_compile() {
 
 src_install() {
   mkdir -p "${D}"/etc/dynomite
+  mkdir -p "${D}"/var/log/dynomite
+
   default_src_install
   newinitd "${FILESDIR}"/dynomite.initd dynomite || die "newinitd failed"
 

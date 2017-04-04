@@ -9,13 +9,13 @@ depend() {
 }
 
 start_pre() {
-        checkpath -d -m 0775 -o root:root /run/zabbix
+        checkpath -d -m 0775 -o redis:redis /run/dynomite
 }
 
 start() {
         ebegin "Starting Dynomite agent"
         start-stop-daemon --start --pidfile ${pid_file} \
-                --user root --group root --exec /usr/sbin/dynomite -- -c /etc/dynomite/dynomite.yml
+                --user redis --group redis --exec /usr/sbin/dynomite -- -c /etc/dynomite/dynomite.yml --output=/var/log/dynomite/dynomite.log
         eend $?
 }
 
