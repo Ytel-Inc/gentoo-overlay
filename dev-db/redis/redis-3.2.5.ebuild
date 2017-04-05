@@ -102,7 +102,7 @@ src_install() {
 	fperms 0644 /etc/{redis,sentinel}.conf
 
 	newconfd "${FILESDIR}/redis.confd" redis
-	newinitd "${FILESDIR}/redis.initd-4" redis
+	newinitd "${FILESDIR}/redis.initd" redis
 
 	systemd_newunit "${FILESDIR}/redis.service-2" redis.service
 	systemd_newtmpfilesd "${FILESDIR}/redis.tmpfiles" redis.conf
