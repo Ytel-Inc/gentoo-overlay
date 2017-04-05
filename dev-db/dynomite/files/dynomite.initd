@@ -1,0 +1,27 @@
+#!/sbin/openrc-run
+# Copyright 1999-2016 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+pid_file="/run/dynomite/dynomite.pid"
+
+depend() {
+        need net
+}
+
+start_pre() {
+        checkpath -d -m 0775 -o redis:redis /run/dynomite
+        checkpath -d -m 0775 -o redis:redis /var/log/dynomite
+}
+
+start() {
+        ebegin "Starting Dynomite agent"
+        start-stop-daemon --start --pidfile ${pid_file} \
+                --user redis --group redis --exec /usr/sbin/dynomite -- -d -c /etc/dynomite/dynomite.yml --output=/var/log/dynomite/dynomite.log
+        eend $?
+}
+
+stop() {
+        ebegin "Stopping Dynomite agent"
+        start-stop-daemon  --stop --pidfile ${pid_file}
+        eend $?
+}

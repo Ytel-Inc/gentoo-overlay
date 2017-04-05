@@ -3,8 +3,10 @@
 # $Id:$
 
 EAPI="5"
+PYTHON_COMPAT=( python{2_7,3_3,3_4} ) # 3.4 needs to be tested
+PYTHON_REQ_USE='threads(+)'
 
-inherit autotools eutils flag-o-matic python user java-pkg-opt-2
+inherit autotools eutils flag-o-matic python-any-r1 user java-pkg-opt-2
 
 DESCRIPTION="FreeSWITCH telephony platform"
 HOMEPAGE="http://www.freeswitch.org/"
@@ -118,10 +120,12 @@ REQUIRED_USE="
 
 # Though speex is obsolete (see https://wiki.freeswitch.org/wiki/Mod_speex), configure fails without it
 RDEPEND="virtual/libc
+  dev-lang/yasm
+  !dev-lang/nasm
 	>=media-libs/speex-1.2_rc1
 	libedit? ( dev-libs/libedit )
 	odbc? ( dev-db/unixODBC )
-	esl_java? ( >=virtual/jre-1.5:* )
+	esl_java? ( >=dev-java/oracle-jdk-bin-1.8:* )
 	esl_lua? ( || ( dev-lang/lua dev-lang/luajit:2 ) )
 	esl_managed? ( >=dev-lang/mono-1.9 )
 	esl_perl? ( dev-lang/perl )
@@ -132,15 +136,16 @@ RDEPEND="virtual/libc
 	freeswitch_modules_enum? ( >=net-libs/ldns-1.6.6 )
 	freeswitch_modules_xml_ldap? ( net-nds/openldap )
 	freeswitch_modules_ldap? ( net-nds/openldap )
-	freeswitch_modules_java? ( >=virtual/jre-1.5:* )
+	freeswitch_modules_java? ( >=dev-java/oracle-jdk-bin-1.8:* )
 	freeswitch_modules_h323? ( || ( net-libs/openh323 net-libs/ptlib ) )
 	freeswitch_modules_opal? ( net-libs/opal[h323,iax] )
 	freeswitch_modules_opus? ( media-libs/opus )
 	freeswitch_modules_osp? ( >=net-libs/osptoolkit-4.0.3 )
 	freeswitch_modules_perl? ( dev-lang/perl[ithreads] )
-	freeswitch_modules_python? ( dev-lang/python:2.7[threads] )
+	freeswitch_modules_python? ( dev-lang/python:2.7 )
 	freeswitch_modules_managed? ( >=dev-lang/mono-1.9 )
 	freeswitch_modules_sndfile? ( media-libs/libsndfile )
+	freeswitch_modules_soundtouch? ( media-libs/libsoundtouch )
 	freeswitch_modules_skypopen? ( x11-base/xorg-server x11-apps/xhost net-im/skype media-fonts/font-misc-misc media-fonts/font-cursor-misc )
 	freeswitch_modules_memcache? ( net-misc/memcached )
 	freeswitch_modules_erlang_event? ( dev-lang/erlang )
@@ -166,13 +171,15 @@ DEPEND="${RDEPEND}
 	>=sys-devel/autoconf-2.60
 	>=sys-devel/automake-1.10
 	virtual/pkgconfig
+	dev-lang/lua
+	dev-db/sqlite
 	sctp? ( kernel_linux? ( net-misc/lksctp-tools ) )
-	esl_java? ( >=virtual/jdk-1.5:* >=dev-lang/swig-1.3.6:1 )
-	esl_lua? ( >=dev-lang/swig-1.3.26:1 )
+	esl_java? ( >=dev-java/oracle-jdk-bin-1.8:* =dev-lang/swig-2*:0 )
+	esl_lua? ( dev-lang/lua =dev-lang/swig-2*:0 )
 	esl_managed? ( =dev-lang/swig-2*:0 )
 	esl_perl? ( >=dev-lang/swig-1.1:1 )
 	esl_python? ( >=dev-lang/swig-1.1:1 )
-	freeswitch_modules_java? ( >=virtual/jdk-1.5:* )
+	freeswitch_modules_java? ( >=dev-java/oracle-jdk-bin-1.8:* )
 "
 
 PDEPEND="media-sound/freeswitch-sounds
@@ -228,10 +235,7 @@ pkg_setup() {
 
 		export SWIFT_HOME
 	fi
-
-	python_set_active_version 2
-	python_pkg_setup
-
+	python-any-r1_pkg_setup
 	enewgroup "${FREESWITCH_GROUP}"
 	enewuser "${FREESWITCH_USER}" -1 -1 "/var/lib/${PN}" "${FREESWITCH_GROUP}"
 }
@@ -365,7 +369,7 @@ esl_doperlmod() {
 src_prepare() {
 	# disable -Werror
 	epatch "${FILESDIR}/${P}-no-werror.patch"
-	epatch "${FILESDIR}/${P}-configure.patch"
+
 	# Fix broken libtool?
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr/Makefile.in"
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr-util/Makefile.in"
@@ -427,7 +431,7 @@ src_configure() {
 		--with-pkgconfigdir="/usr/$(get_libdir)/pkgconfig" \
 		$(use_enable sctp) \
 		$(use_enable zrtp) \
-		$(use_with freeswitch_modules_python python "$(PYTHON -a)") \
+		$(use_with freeswitch_modules_python python "${PYTHON}") \
 		$(use_enable resampler resample) \
 		$(use_enable odbc core-odbc-support) \
 		${java_opts} ${config_opts} || die "failed to configure FreeSWITCH"
@@ -538,6 +542,11 @@ src_install() {
 }
 
 pkg_postinst() {
+	einfo
+	elog "setting paxctl flags on binaries"
+	sh "${FILESDIR}"/pax_fix.sh
+	elog "pax flags have been set"
+	einfo
 
 	einfo
 	einfo "FreeSWITCH has been successfully emerged!"
