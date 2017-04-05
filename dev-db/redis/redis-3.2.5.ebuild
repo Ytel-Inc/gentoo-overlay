@@ -96,9 +96,10 @@ src_compile() {
 }
 
 src_install() {
-	insinto /etc/
+  mkdir -p "${D}"/etc/redis
+	insinto /etc/redis/
 	doins redis.conf sentinel.conf
-	use prefix || fowners redis:redis /etc/{redis,sentinel}.conf
+	use prefix || fowners redis:redis /etc/redis/{redis,sentinel}.conf
 	fperms 0644 /etc/{redis,sentinel}.conf
 
 	newconfd "${FILESDIR}/redis.confd" redis
