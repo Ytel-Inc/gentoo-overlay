@@ -22,4 +22,4 @@ IUSE=""
 
 DEPEND=">=dev-libs/libcouchbase-9999
         >=dev-php/igbinary-2.0.1
-        >=dev-php/pcs-1.3.3"
+        >=dev-php/pecl-pcs-1.3.3"
