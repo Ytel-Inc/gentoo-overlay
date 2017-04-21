@@ -18,7 +18,7 @@ SRC_URI="http://pecl.php.net/get/couchbase-${PV}.tgz"
 LICENSE="BSD"
 SLOT="0"
 KEYWORDS="~amd64"
-IUSE=""
+IUSE="igbinary"
 
 DEPEND=">=dev-libs/libcouchbase-9999
         >=dev-php/igbinary-2.0.1
