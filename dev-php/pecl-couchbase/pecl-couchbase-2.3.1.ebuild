@@ -20,6 +20,6 @@ SLOT="0"
 KEYWORDS="~amd64"
 IUSE=""
 
-DEPEND=">=dev-lib/libcouchbase-9999
+DEPEND=">=dev-libs/libcouchbase-9999
         >=dev-php/igbinary-2.0.1
         >=dev-php/pcs-1.3.3"
