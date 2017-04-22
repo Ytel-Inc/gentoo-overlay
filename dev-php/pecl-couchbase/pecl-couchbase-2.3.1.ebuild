@@ -2,24 +2,33 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Header: $
 
-EAPI=5
-
-S="${WORKDIR}/couchbase-${PV}"
+EAPI="6"
 
 PHP_EXT_NAME="couchbase"
-USE_PHP="php7-0"
+PHP_EXT_INI="yes"
+PHP_EXT_ZENDEXT="no"
 
-inherit php-ext-source-r2
+USE_PHP="php5-5 php7-0"
+
+inherit php-ext-pecl-r3
+
+KEYWORDS="~amd64"
 
 DESCRIPTION="The PHP client library provides fast access to documents stored in a Couchbase Server."
-HOMEPAGE="https://developer.couchbase.com/server/other-products/release-notes-archives/php-sdk"
-SRC_URI="http://pecl.php.net/get/couchbase-${PV}.tgz"
-
-LICENSE="BSD"
+LICENSE="PHP-3.01"
 SLOT="0"
-KEYWORDS="~amd64"
 IUSE="igbinary"
 
-DEPEND=">=dev-libs/libcouchbase-9999
-        >=dev-php/igbinary-2.0.1
+DEPEND="igbinary? ( dev-php/igbinary )
         >=dev-php/pecl-pcs-1.3.3"
+RDEPEND="$DEPEND"
+
+S="${WORKDIR}/${MY_P}"
+
+src_configure() {
+    local PHP_EXT_ECONF_ARGS=(
+        --with-couchbase
+    )
+    php-ext-source-r3_src_configure
+}
+
