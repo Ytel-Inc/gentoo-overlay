@@ -9,8 +9,7 @@ IUSE="debug"
 inherit eutils flag-o-matic git-2 autotools
 
 EGIT_REPO_URI="https://github.com/Netflix/dynomite.git"
-EGIT_BRANCH="v0.5.9"
-#EGIT_BOOTSTRAP="./autoreconf -fvi"
+#EGIT_BRANCH="v0.5.9"
 
 DESCRIPTION="Dynomite built by netflix"
 HOMEPAGE="https://github.com/Netflix/dynomite"
