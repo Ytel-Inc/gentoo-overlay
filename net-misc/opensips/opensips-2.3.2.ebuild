@@ -6,8 +6,8 @@ inherit eutils
 
 DESCRIPTION="OpenSIPS - flexible and robust SIP (RFC3261) server"
 HOMEPAGE="http://www.opensips.org/"
-MY_P="${P}_src"
-SRC_URI="http://opensips.org/pub/opensips/${PV}/src/${MY_P}.tar.gz"
+MY_P="${P}"
+SRC_URI="http://opensips.org/pub/opensips/${PV}/${MY_P}.tar.gz"
 
 LICENSE="GPL-2"
 SLOT="0"
