@@ -12,9 +12,15 @@ SRC_URI="http://opensips.org/pub/opensips/${PV}/${MY_P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="debug ipv6 mysql postgres radius jabber ssl cpl unixodbc"
+IUSE="debug ipv6 mysql postgres radius jabber ssl cpl unixodbc b2bua presence xmlrpc httpd json rest_client load_balancer"
 
 RDEPEND="
+    rest_client? ( net-misc/curl )
+    json? ( dev-libs/json-c )
+    httpd? ( net-libs/libmicrohttpd )
+    b2bua? ( dev-libs/libxml2 )
+    presence? ( dev-libs/libxml2 )
+    xmlrpc? ( dev-libs/xmlrpc-c[abyss] )
     mysql? ( dev-db/mysql )
     radius? ( net-dialup/radiusclient-ng )
     postgres? ( dev-db/postgresql )
@@ -27,6 +33,24 @@ inc_mod=""
 make_options=""
 
 pkg_setup() {
+    use load_balancer && \
+        inc_mod="${inc_mod} load_balancer"
+
+    use rest_client && \
+        inc_mod="${inc_mod} rest_client"
+
+    use json && \
+        inc_mod="${inc_mod} json"
+
+    use httpd && \
+        inc_mod="${inc_mod} httpd"
+
+    use b2bua && \
+        inc_mod="${inc_mod} b2b_entities b2bua_logic"
+
+    use presence && \
+        inc_mod="${inc_mod} presence presence_dialoginfo presence_mwi presence_xcapdiff presence_xml pua pua_bla pua_dialoginfo pua_mi pua_usrloc pua_xmpp rls xcap_client"
+
     use mysql && \
         inc_mod="${inc_mod} db_mysql"
 
