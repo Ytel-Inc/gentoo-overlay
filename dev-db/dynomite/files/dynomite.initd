@@ -9,19 +9,24 @@ depend() {
 }
 
 start_pre() {
-        checkpath -d -m 0775 -o redis:redis /run/dynomite
-        checkpath -d -m 0775 -o redis:redis /var/log/dynomite
+        einfo "setting permissions on directories"
+        checkpath -d -m 0775 -o ${DYNOMITE_USER}:${DYNOMITE_GROUP} /run/dynomite
+        checkpath -d -m 0775 -o ${DYNOMITE_USER}:${DYNOMITE_GROUP} /var/log/dynomite
 }
 
 start() {
-        ebegin "Starting Dynomite agent"
-        start-stop-daemon --background --start --pidfile ${pid_file} --make-pidfile\
-                --user redis --group redis --exec /usr/sbin/dynomite -- -c /etc/dynomite/dynomite.yml --output=/var/log/dynomite/dynomite.log
+        ebegin "Starting Dynomite"
+        einfo "Memory Buffer set to ${DYNOMITE_MBUF}"
+        einfo "Allocated messages set to ${DYNOMITE_ALLOC_MSGS}"
+        start-stop-daemon --background --start --pidfile ${pid_file} --make-pidfile
+                --user ${DYNOMITE_USER} --group ${DYNOMITE_GROUP} \
+                --exec ${DYNOMITE_BIN} -- -c ${DYNOMITE_CONFIG} -M${DYNOMITE_ALLOC_MSGS} -m${DYNOMITE_MBUF} --output=${DYNOMITE_LOG}
         eend $?
 }
 
 stop() {
-        ebegin "Stopping Dynomite agent"
+        ebegin "Stopping Dynomite"
         start-stop-daemon  --stop --pidfile ${pid_file}
+        pkill -f ${DYNOMITE_BIN}
         eend $?
 }

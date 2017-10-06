@@ -1,0 +1,15 @@
+# Config file for /etc/init.d/dynomite
+
+DYNOMITE_BIN="/usr/sbin/dynomite"
+DYNOMITE_CONFIG="/etc/dynomite/dynomite.yml"
+DYNOMITE_PID="/run/dynomite/dynomite.pid"
+DYNOMITE_LOG="/var/log/dynomite/dynomite.log"
+DYNOMITE_USER="redis"
+DYNOMITE_GROUP="redis"
+DYNOMITE_MBUF="16384"
+
+DYNOMITE_ALLOC_MSGS="50000"# 16GB ram
+# DYNOMITE_ALLOC_MSGS="100000" # 30gb
+# DYNOMITE_ALLOC_MSGS="300000" # 61gb
+# DYNOMITE_ALLOC_MSGS="800000" # 122gb
+# DYNOMITE_ALLOC_MSGS="1000000" # 244gb - Dynomite upper threshold is 1M
