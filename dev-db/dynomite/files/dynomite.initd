@@ -16,7 +16,7 @@ start() {
         ebegin "Starting Dynomite"
         einfo "Memory Buffer set to ${DYNOMITE_MBUF}"
         einfo "Allocated messages set to ${DYNOMITE_ALLOC_MSGS}"
-        start-stop-daemon --background --start --pidfile ${pid_file} --make-pidfile
+        start-stop-daemon --background --start --pidfile ${DYNOMITE_PID} --make-pidfile \
                 --user ${DYNOMITE_USER} --group ${DYNOMITE_GROUP} \
                 --exec ${DYNOMITE_BIN} -- -c ${DYNOMITE_CONFIG} -M${DYNOMITE_ALLOC_MSGS} -m${DYNOMITE_MBUF} --output=${DYNOMITE_LOG}
         eend $?
@@ -24,7 +24,7 @@ start() {
 
 stop() {
         ebegin "Stopping Dynomite"
-        start-stop-daemon  --stop --pidfile ${pid_file}
+        start-stop-daemon  --stop --pidfile ${DYNOMITE_PID}
         pkill -f ${DYNOMITE_BIN}
         eend $?
 }
