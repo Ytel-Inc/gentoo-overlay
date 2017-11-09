@@ -69,6 +69,9 @@ pkg_setup() {
     use unixodbc && \
         inc_mod="${inc_mod} db_unixodbc"
 
+    use xmlrpc && \
+	    inc_mod="${inc_mod} mi_xmlrpc_ng"
+
     export inc_mod
 }
 
