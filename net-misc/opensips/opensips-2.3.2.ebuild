@@ -12,7 +12,7 @@ SRC_URI="http://opensips.org/pub/opensips/${PV}/${MY_P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="debug ipv6 mysql postgres radius jabber ssl cpl unixodbc b2bua presence xmlrpc httpd json rest_client load_balancer"
+IUSE="debug ipv6 mysql postgres radius jabber ssl cpl unixodbc b2bua presence xmlrpc httpd json rest_client load_balancer redis"
 
 RDEPEND="
     rest_client? ( net-misc/curl )
@@ -21,6 +21,7 @@ RDEPEND="
     b2bua? ( dev-libs/libxml2 )
     presence? ( dev-libs/libxml2 )
     xmlrpc? ( dev-libs/xmlrpc-c[abyss] )
+    redis? ( dev-db/redis dev-libs/hiredis )
     mysql? ( dev-db/mysql )
     radius? ( net-dialup/radiusclient-ng )
     postgres? ( dev-db/postgresql )
@@ -71,6 +72,10 @@ pkg_setup() {
 
     use xmlrpc && \
 	    inc_mod="${inc_mod} mi_xmlrpc_ng"
+    
+	use redis && \
+	    inc_mod="${inc_mod} cachedb_redis"
+
 
     export inc_mod
 }
