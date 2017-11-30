@@ -71,11 +71,15 @@ pkg_setup() {
         inc_mod="${inc_mod} db_unixodbc"
 
     use xmlrpc && \
+<<<<<<< HEAD
+        inc_mod="${inc_mod} mi_xmlrpc_ng"
+=======
 	    inc_mod="${inc_mod} mi_xmlrpc_ng"
     
 	use redis && \
 	    inc_mod="${inc_mod} cachedb_redis"
 
+>>>>>>> d3d3dc6bf2c22b02fb7ad0fd757e75c751f42473
 
     export inc_mod
 }
@@ -128,6 +132,7 @@ src_install () {
         man_dir="" \
         doc_prefix=${D}/usr/share/doc \
         doc_dir=${PF} || die
+	newconfd ${FILESDIR}/opensips.default opensips
     exeinto /etc/init.d
     newexe ${FILESDIR}/opensips.init opensips
 

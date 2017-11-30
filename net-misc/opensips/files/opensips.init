@@ -10,7 +10,7 @@ depend() {
 start() {
 	ebegin "Starting OpenSIPS"
 	start-stop-daemon --start --quiet --pidfile /var/run/opensips.pid \
-		--exec /usr/sbin/opensips -- -P /var/run/opensips.pid
+		--exec /usr/sbin/opensips -- -M ${P_MEMORY} -m ${S_MEMORY} -P /var/run/opensips.pid
 	eend $?
 }
 
