@@ -1,0 +1,12 @@
+diff -ruN janus-gateway/Makefile.am janus-patched/Makefile.am
+--- janus-gateway/Makefile.am	2016-10-25 15:12:06.000000000 -0700
++++ janus-patched/Makefile.am	2016-10-28 10:02:17.000000000 -0700
+@@ -17,7 +17,7 @@
+ # some fairly big refactoring though, which can wait.
+ # AM_CFLAGS += -Wshadow -Wstrict-aliasing=2
+ 
+-AM_CFLAGS += -fstack-protector-all -g -ggdb -fPIC -rdynamic -pthread
++AM_CFLAGS += -fstack-protector-all -g -ggdb -O0 -fPIC -rdynamic -pthread
+ 
+ # FIXME: make docs work with distcheck
+ DISTCHECK_CONFIGURE_FLAGS = --disable-docs --enable-post-processing

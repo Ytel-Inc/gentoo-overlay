@@ -1,0 +1,47 @@
+#!/sbin/openrc-run
+
+REDIS_DIR=${REDIS_DIR:-/var/lib/redis}
+REDIS_CONF=${REDIS_CONF:-/etc/redis.conf}
+REDIS_OPTS=${REDIS_OPTS:-"${REDIS_CONF}"}
+REDIS_USER=${REDIS_USER:-redis}
+REDIS_GROUP=${REDIS_GROUP:-redis}
+REDIS_TIMEOUT=${REDIS_TIMEOUT:-30}
+REDIS_SERVER=${REDIS_SERVER:-/usr/sbin/redis-server}
+pidfile=${REDIS_PID:-/run/redis/redis.pid}
+
+depend() {
+        use net localmount logger
+        after keepalived
+}
+
+start_pre() {
+        checkpath -d -m 0775 -o ${REDIS_USER}:${REDIS_GROUP} $(dirname ${REDIS_PID})
+}
+
+start() {
+        # Now we can startup
+        ebegin "Starting ${SVCNAME}"
+
+        start-stop-daemon \
+                ${DEBUG:+"--verbose"} \
+                --start \
+                --exec ${REDIS_SERVER} \
+                --make-pidfile \
+                --pidfile "${pidfile}" \
+                --background \
+                --wait ${REDIS_TIMEOUT} \
+                --user ${REDIS_USER} \
+                --group ${REDIS_GROUP} \
+                --chdir "${REDIS_DIR}" \
+                -- ${REDIS_OPTS}
+        eend $?
+}
+
+stop() {
+        ebegin "Stopping ${SVCNAME}"
+        start-stop-daemon --stop \
+                --exec ${REDIS_SERVER} \
+                --retry ${REDIS_TIMEOUT} \
+                --pidfile ${pidfile}
+        eend
+}

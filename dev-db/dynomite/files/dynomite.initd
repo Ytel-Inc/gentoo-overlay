@@ -1,0 +1,29 @@
+#!/sbin/openrc-run
+# Copyright 1999-2016 Gentoo Foundation
+# Distributed under the terms of the GNU General Public License v2
+
+depend() {
+        need net
+}
+
+start_pre() {
+        einfo "setting permissions on directories"
+        checkpath -d -m 0775 -o ${DYNOMITE_USER}:${DYNOMITE_GROUP} /run/dynomite
+        checkpath -d -m 0775 -o ${DYNOMITE_USER}:${DYNOMITE_GROUP} /var/log/dynomite
+}
+
+start() {
+        ebegin "Starting Dynomite"
+        einfo "Memory Buffer set to ${DYNOMITE_MBUF}"
+        einfo "Allocated messages set to ${DYNOMITE_ALLOC_MSGS}"
+        start-stop-daemon --background --start --pidfile ${DYNOMITE_PID} --make-pidfile \
+                --user ${DYNOMITE_USER} --group ${DYNOMITE_GROUP} \
+                --exec ${DYNOMITE_BIN} -- -c ${DYNOMITE_CONFIG} -m${DYNOMITE_MBUF} --output=${DYNOMITE_LOG}
+        eend $?
+}
+
+stop() {
+        ebegin "Stopping Dynomite"
+        start-stop-daemon  --stop --pidfile ${DYNOMITE_PID}
+        eend $?
+}
