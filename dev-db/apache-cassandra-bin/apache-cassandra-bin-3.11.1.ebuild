@@ -34,6 +34,14 @@ src_prepare() {
     cd "${S}"
     find . \( -name \*.bat -or -name \*.exe \) -delete
     rm bin/stop-server
+    if declare -p PATCHES | grep -q "^declare -a "; then
+        [[ -n ${PATCHES[@]} ]] && eapply "${PATCHES[@]}"
+    else
+        [[ -n ${PATCHES} ]] && eapply ${PATCHES}
+    fi
+    eapply_user
+
+    
 }
 
 src_install() {
@@ -64,4 +72,8 @@ src_install() {
 
     echo "CONFIG_PROTECT=\"${INSTALL_DIR}/conf\"" > "${T}/25cassandra-${SLOT}" || die
     doenvd "${T}/25cassandra-${SLOT}"
+    if [[ -f Makefile ]] || [[ -f GNUmakefile ]] || [[ -f makefile ]]; then
+        emake DESTDIR="${D}" install
+    fi
+    einstalldocs
 }
