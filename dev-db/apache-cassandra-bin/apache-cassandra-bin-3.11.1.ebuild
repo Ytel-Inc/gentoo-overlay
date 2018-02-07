@@ -68,7 +68,7 @@ src_install() {
     fowners -R cassandra:cassandra ${INSTALL_DIR}
     fowners -R cassandra:cassandra /var/lib/cassandra
 
-    newinitd "${FILESDIR}"/cassandra.initd cassandra
+    newinitd "${FILESDIR}"/cassandra-3.11.initd cassandra
 
     echo "CONFIG_PROTECT=\"${INSTALL_DIR}/conf\"" > "${T}/25cassandra-${SLOT}" || die
     doenvd "${T}/25cassandra-${SLOT}"
