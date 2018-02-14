@@ -9,7 +9,7 @@ inherit autotools flag-o-matic ssl-cert user
 DESCRIPTION="Powerful SMS and WAP gateway"
 HOMEPAGE="http://www.kannel.org/"
 #SRC_URI="http://www.kannel.org/download/${PV}/gateway-${PV}.tar.gz"
-SRC_URI="http://www.kannel.org/download/kannel-snapshot.tar.gz"
+SRC_URI="https://mirrors.ytel.com/portage/app-mobilephone/kannel/kannel-snapshot.tar.gz"
 
 LICENSE="Apache-1.1"
 SLOT="0"
