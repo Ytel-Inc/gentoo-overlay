@@ -35,7 +35,7 @@ FM_APPLICATIONS="
 	http_cache ladspa lcr +limit memcache mongo nibblebill
 	osp rad_auth random redis rss skel +sms snapshot
 	snom soundtouch +spandsp spy stress +valet_parking vmd
-	+voicemail voicemail_ivr amd
+	+voicemail voicemail_ivr amd ruby vm
 "
 FM_TTS="
 	cepstral flite pocketsphinx tts_commandline unimrcp
@@ -378,6 +378,15 @@ src_prepare() {
 	einfo "Adding AMD module"
 	einfo
 	cp -R "${FILESDIR}/AMD" "${S}/src/mod/applications/mod_amd"
+	
+	einfo
+	einfo "Adding Ruby module"
+	einfo
+	cp -R "${FILESDIR}/RUBY" "${S}/src/mod/applications/mod_ruby"
+	einfo
+	einfo "Adding VM module"
+	einfo
+	cp -R "${FILESDIR}/VM" "${S}/src/mod/applications/mod_vm"
 
 
 	if use freeswitch_modules_freetdm
