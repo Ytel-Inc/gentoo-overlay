@@ -1,0 +1,5 @@
+# Config file for /etc/init.d/telegraf
+
+TELEGRAF_USER=telegraf
+TELEGRAF_GROUP=telegraf
+TELEGRAF_OPTS="--config-directory=/etc/telegraf/telegraf.d"
