@@ -35,7 +35,7 @@ FM_APPLICATIONS="
 	http_cache ladspa lcr +limit memcache mongo nibblebill
 	osp rad_auth random redis rss skel +sms snapshot
 	snom soundtouch +spandsp spy stress +valet_parking vmd
-	+voicemail voicemail_ivr amd ruby vm
+	+voicemail voicemail_ivr amd ruby vm ytel_dial
 "
 FM_TTS="
 	cepstral flite pocketsphinx tts_commandline unimrcp
@@ -387,6 +387,10 @@ src_prepare() {
 	einfo "Adding VM module"
 	einfo
 	cp -R "${FILESDIR}/VM" "${S}/src/mod/applications/mod_vm"
+	einfo
+	einfo "Adding ytel_dial module"
+	einfo
+	cp -R "${FILESDIR}/YTEL_DIAL" "${S}/src/mod/applications/mod_ytel_dial"
 
 
 	if use freeswitch_modules_freetdm
