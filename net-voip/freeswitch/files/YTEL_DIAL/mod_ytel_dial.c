@@ -200,7 +200,7 @@ SWITCH_STANDARD_APP(ytel_dial_app_function)
 	if (switch_channel_test_ready(caller_channel,SWITCH_TRUE,SWITCH_FALSE) && (status == SWITCH_STATUS_SUCCESS) ) {
 		switch_channel_t *peer_channel = switch_core_session_get_channel(peer_session);
 		// IF we are to send DTMF for answering machine service,  Send a bit of silence to start audio stream on our side.
-		if (strcmp(callInfo->dtmfVM , "1")) {
+		if (strcmp(callInfo->dtmfVM , "1") == 0) {
 			char *dtmfInfo = switch_safe_strdup(callInfo->number);
 			strcat(dtmfInfo,"#@400");
 			switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "Got answer for Direct VM for real num %s \n",callInfo->destArray[lastDestPos]);
