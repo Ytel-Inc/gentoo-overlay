@@ -93,7 +93,7 @@ static int parseInput(const char *inputStr, call_info_t *callInfo, switch_core_s
   //internal/+13038866029@208.94.33.34 ytel_dial(+13038866029 8028#13038866028 3038866028 3038866022 15 10 0 sbc 0)
   //mod_ytel_dial.c:161 YTELSTAT:  311 +3 8028#13038866028 NORMAL_TEMPORARY_FAILURE DIAL 0
   //mod_ytel_dial.c:243 YTELSTAT:  311 3 (null) NORMAL_TEMPORARY_FAILURE (null) END
-  //switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "YTELSTAT: %s %s %s %s %s %s END\n",&callInfo->dtmfVM,&callInfo->number,&callInfo->callerIdArray[calleridPos],callInfo->destArray[destPos],switch_channel_cause2str(cause),switch_channel_get_variable(caller_channel,"billmsec"));
+  //switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "YTELSTAT: %s %s %s %s %s %s END\n",&callInfo->dtmfVM,&callInfo->number,callInfo->callerIdArray[calleridPos],callInfo->destArray[destPos],switch_channel_cause2str(cause),switch_channel_get_variable(caller_channel,"billmsec"));
 
   callInfo->callerIdArray[0] = switch_safe_strdup(argv[0]);
   callInfo->callerIdArray[1] = switch_safe_strdup(argv[3]);
@@ -116,7 +116,7 @@ static int parseInput(const char *inputStr, call_info_t *callInfo, switch_core_s
   callInfo->destCount = switch_separate_string(vmSystemTmp, ',', callInfo->destArray, (sizeof(callInfo->destArray) / sizeof(callInfo->destArray[0])));
   switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_DEBUG, "Done with vm line %s %d \n",callInfo->destArray[0],callInfo->destCount);
 
-  //switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "Parsed: dtmf %s number %s callid %s callid %s dest %s otimeout %s ptimeout %s gw %s retry %d destcount %d callid count %d \n",callInfo->dtmfVM,callInfo->number,&callInfo->callerIdArray[0],&callInfo->callerIdArray[1],callInfo->destArray[0],callInfo->origTimeout,callInfo->progressTimeout,callInfo->sipGateway,callInfo->retry,callInfo->destCount,callInfo->callerIdCount);
+  //switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "Parsed: dtmf %s number %s callid %s callid %s dest %s otimeout %s ptimeout %s gw %s retry %d destcount %d callid count %d \n",callInfo->dtmfVM,callInfo->number,callInfo->callerIdArray[0],callInfo->callerIdArray[1],callInfo->destArray[0],callInfo->origTimeout,callInfo->progressTimeout,callInfo->sipGateway,callInfo->retry,callInfo->destCount,callInfo->callerIdCount);
   return SWITCH_TRUE;
 }
 
@@ -159,20 +159,20 @@ SWITCH_STANDARD_APP(ytel_dial_app_function)
   if (!parseInput(data,callInfo,session))
     return;
 
-  //switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "Parsed: dtmf %s number %s callid %s callid %s dest %s otimeout %s ptimeout %s gw %s retry %d destcount %d callid count %d \n",callInfo->dtmfVM,callInfo->number,&callInfo->callerIdArray[0],&callInfo->callerIdArray[1],callInfo->destArray[0],callInfo->origTimeout,callInfo->progressTimeout,callInfo->sipGateway,callInfo->retry,callInfo->destCount,callInfo->callerIdCount);
+  //switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "Parsed: dtmf %s number %s callid %s callid %s dest %s otimeout %s ptimeout %s gw %s retry %d destcount %d callid count %d \n",callInfo->dtmfVM,callInfo->number,callInfo->callerIdArray[0],callInfo->callerIdArray[1],callInfo->destArray[0],callInfo->origTimeout,callInfo->progressTimeout,callInfo->sipGateway,callInfo->retry,callInfo->destCount,callInfo->callerIdCount);
   ///////
   // Connect to remote Answering machine
   //////
   do {
       lastDestPos = destPos;
       lastCalleridPos = calleridPos;
-      dial_string = switch_core_session_sprintf(session, DIAL_STR,callInfo->origTimeout,callInfo->progressTimeout,&callInfo->callerIdArray[calleridPos],&callInfo->callerIdArray[calleridPos],callInfo->destArray[destPos],callInfo->sipGateway);
+      dial_string = switch_core_session_sprintf(session, DIAL_STR,callInfo->origTimeout,callInfo->progressTimeout,callInfo->callerIdArray[calleridPos],callInfo->callerIdArray[calleridPos],callInfo->destArray[destPos],callInfo->sipGateway);
       switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "Going to call %s for real num %s retrycount %d \n",callInfo->destArray[destPos],callInfo->number,callInfo->retry);
       if (!switch_channel_test_ready(caller_channel,SWITCH_TRUE,SWITCH_FALSE)) {
 	  break;
       }
       status = switch_ivr_originate(NULL, &peer_session, &cause, dial_string, callInfo->origTimeoutInt, NULL, NULL, NULL, NULL, NULL, SOF_NONE, switch_channel_get_cause_ptr(caller_channel));
-      switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "YTELSTAT: %s %s %s %s %s DIAL %d\n",callInfo->dtmfVM,callInfo->number,&callInfo->callerIdArray[calleridPos],callInfo->destArray[destPos],switch_channel_cause2str(cause),callInfo->retry);
+      switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "YTELSTAT: %s %s %s %s %s DIAL %d\n",callInfo->dtmfVM,callInfo->number,callInfo->callerIdArray[calleridPos],callInfo->destArray[destPos],switch_channel_cause2str(cause),callInfo->retry);
       if (status == SWITCH_STATUS_SUCCESS)
 	break;
 
@@ -206,7 +206,7 @@ SWITCH_STANDARD_APP(ytel_dial_app_function)
       }
       // make sure we are ready to go. set caller channel to 183 ringing
       if (!switch_channel_ready(caller_channel)) {
-	  switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "YTELSTAT: %s %s %s %s %s %d END\n",callInfo->dtmfVM,callInfo->number,&callInfo->callerIdArray[lastCalleridPos],callInfo->destArray[lastDestPos],switch_channel_cause2str(cause),0);
+	  switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "YTELSTAT: %s %s %s %s %s %d END\n",callInfo->dtmfVM,callInfo->number,callInfo->callerIdArray[lastCalleridPos],callInfo->destArray[lastDestPos],switch_channel_cause2str(cause),0);
 	  switch_channel_handle_cause(peer_channel, SWITCH_CAUSE_NORMAL_CLEARING);
 	  return;
       }
@@ -262,7 +262,7 @@ SWITCH_STANDARD_APP(ytel_dial_app_function)
       if (peer_session)
 	switch_core_session_rwunlock(peer_session);
   }
-  switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "YTELSTAT: %s %s %s %s %s %s END\n",callInfo->dtmfVM,callInfo->number,&callInfo->callerIdArray[lastCalleridPos],callInfo->destArray[lastDestPos],switch_channel_cause2str(cause),switch_channel_get_variable(caller_channel,"billmsec"));
+  switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "YTELSTAT: %s %s %s %s %s %s END\n",callInfo->dtmfVM,callInfo->number,callInfo->callerIdArray[lastCalleridPos],callInfo->destArray[lastDestPos],switch_channel_cause2str(cause),switch_channel_get_variable(caller_channel,"billmsec"));
   if (connectSuccess && switch_channel_test_ready(caller_channel,SWITCH_TRUE,SWITCH_FALSE))
     switch_channel_handle_cause(caller_channel, SWITCH_CAUSE_NORMAL_CLEARING);
 }
