@@ -14,7 +14,7 @@ SRC_URI="https://mirrors.ytel.com/portage/app-mobilephone/kannel/kannel-snapshot
 LICENSE="Apache-1.1"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="debug doc mysql libressl pam pcre postgres sqlite ssl redis"
+IUSE="debug doc mysql libressl pam pcre postgres sqlite ssl redis opensmppbox"
 
 RESTRICT="test" # some tests fail with "address already in use"
 
@@ -78,6 +78,15 @@ src_configure() {
 		$(use_with sqlite sqlite3) \
 		$(use_with postgres pgsql) \
 		$(use_with redis redis)
+
+
+	# do opensmppbox
+	if use opensmppbox; then
+		pushd "${S}/addons/opensmppbox"
+		einfo "Configuring OpenSMPPbox..."
+		econf
+		popd
+	fi
 }
 
 # phase disabled by RESTRICT
@@ -92,6 +101,12 @@ src_install() {
 		emake -j1 DESTDIR="${D}" install-docs || die "emake install-docs failed"
 	fi
 
+	# do opensmppbox
+	if use opensmppbox; then
+		einfo "Building OpenSMPPbox..."
+		emake -C addons/opensmppbox DESTDIR="${D}" install
+	fi
+
 	diropts -g kannel -m0750
 	dodir /etc/kannel
 	insinto /etc/kannel
@@ -101,6 +116,13 @@ src_install() {
 	for f in bearerbox smsbox wapbox; do
 		newinitd "${FILESDIR}/kannel-$f.initd" kannel-$f
 	done
+
+	# do opensmppbox config
+	if use opensmppbox; then
+		einfo "Building OpenSMPPbox..."
+		newinitd "${FILESDIR}/kannel-opensmppbox.initd" kannel-opensmppbox
+	fi
+
 
 	diropts -g kannel -m0770
 	keepdir /var/log/kannel
