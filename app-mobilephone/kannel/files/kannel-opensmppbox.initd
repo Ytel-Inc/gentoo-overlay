@@ -4,9 +4,13 @@
 
 KANNEL_SERVICE=${SVCNAME#*-}
 
+depend() {
+	need kannel-bearerbox
+}
+
 checkconfig() {
-	if [ ! -f /etc/kannel/kannel.conf ] ; then
-		eerror "/etc/kannel/kannel.conf file doesn't exists!"
+	if [ ! -f /etc/kannel/opensmppbox.conf ] ; then
+		eerror "/etc/kannel/opensmppbox.conf file doesn't exists!"
 		return 1
 	fi
 }
@@ -18,7 +22,7 @@ start() {
 	ebegin "Starting kannel ${KANNEL_SERVICE}"
 	start-stop-daemon --start --quiet --exec /usr/sbin/${KANNEL_SERVICE} -- \
 		--daemonize --user kannel --logfile /var/log/kannel/${KANNEL_SERVICE}.log \
-		--pid-file /var/run/kannel/${KANNEL_SERVICE}.pid /etc/kannel/kannel.conf
+		--pid-file /var/run/kannel/${KANNEL_SERVICE}.pid /etc/kannel/opensmppbox.conf
 	eend $?
 }
 
