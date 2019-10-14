@@ -1,7 +1,7 @@
 # Copyright 1999-2005 Gentoo Foundation
 # Distributed under the terms of the GNU General Public License v2
 # $Header$
-EAPI=6
+EAPI=7
 inherit eutils
 
 DESCRIPTION="OpenSIPS - flexible and robust SIP (RFC3261) server"
@@ -74,7 +74,10 @@ pkg_setup() {
         inc_mod="${inc_mod} mi_xmlrpc_ng"
 
     use redis && \
+        inc_mod="${inc_mod} cachedb_redis"
 
+    use ssl && \
+        inc_mod="${inc_mod} tls_mgm tls"
 
     export inc_mod
 }
