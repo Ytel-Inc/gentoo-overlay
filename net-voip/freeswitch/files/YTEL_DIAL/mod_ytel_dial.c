@@ -171,7 +171,7 @@ SWITCH_STANDARD_APP(ytel_dial_app_function)
       if (!switch_channel_test_ready(caller_channel,SWITCH_TRUE,SWITCH_FALSE)) {
 	  break;
       }
-      status = switch_ivr_originate(NULL, &peer_session, &cause, dial_string, callInfo->origTimeoutInt, NULL, NULL, NULL, NULL, NULL, SOF_NONE, switch_channel_get_cause_ptr(caller_channel));
+      status = switch_ivr_originate(NULL, &peer_session, &cause, dial_string, callInfo->origTimeoutInt, NULL, NULL, NULL, NULL, NULL, SOF_NONE, switch_channel_get_cause_ptr(caller_channel),NULL);
       switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "YTELSTAT: %s %s %s %s %s DIAL %d\n",callInfo->dtmfVM,callInfo->number,callInfo->callerIdArray[calleridPos],callInfo->destArray[destPos],switch_channel_cause2str(cause),callInfo->retry);
       if (status == SWITCH_STATUS_SUCCESS)
 	break;
@@ -207,6 +207,8 @@ SWITCH_STANDARD_APP(ytel_dial_app_function)
       // make sure we are ready to go. set caller channel to 183 ringing
       if (!switch_channel_ready(caller_channel)) {
 	  switch_log_printf(SWITCH_CHANNEL_SESSION_LOG(session), SWITCH_LOG_NOTICE, "YTELSTAT: %s %s %s %s %s %d END\n",callInfo->dtmfVM,callInfo->number,callInfo->callerIdArray[lastCalleridPos],callInfo->destArray[lastDestPos],switch_channel_cause2str(cause),0);
+          if (peer_session)
+    	    switch_core_session_rwunlock(peer_session);
 	  switch_channel_handle_cause(peer_channel, SWITCH_CAUSE_NORMAL_CLEARING);
 	  return;
       }

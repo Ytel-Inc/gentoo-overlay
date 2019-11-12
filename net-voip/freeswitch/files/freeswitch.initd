@@ -50,6 +50,7 @@ start() {
         checkpath -q -d `dirname ${FREESWITCH_PID}` -o ${FREESWITCH_USER}
         #start-stop-daemon --make-pidfile --user ${FREESWITCH_USER:-freeswitch} --group ${FREESWITCH_GROUP:-freeswitch} --pidfile "${FREESWITCH_PIDFILE:-/var/run/freeswitch/freeswitch.pid}" --exec ${FREESWITCH_BIN} -- ${FREESWITCH_OPTS}
         start-stop-daemon --pidfile "${FREESWITCH_PIDFILE:-/var/run/freeswitch/freeswitch.pid}" --exec ${FREESWITCH_BIN} -- -u  ${FREESWITCH_USER:-freeswitch} -g ${FREESWITCH_GROUP:-freeswitch} -ncwait -nonat
+        chmod 660 ${FREESWITCH_PIDFILE:-/var/run/freeswitch/freeswitch.pid}
         eend $?
 }
 

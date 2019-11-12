@@ -76,6 +76,9 @@ pkg_setup() {
     use redis && \
 	    inc_mod="${inc_mod} cachedb_redis"
 
+    use ssl && \
+        inc_mod="${inc_mod} tls_mgm proto_tls"
+
     export inc_mod
 }
 
