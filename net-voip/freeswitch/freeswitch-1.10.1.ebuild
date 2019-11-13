@@ -370,6 +370,7 @@ esl_doperlmod() {
 src_prepare() {
 	# disable -Werror
 	epatch "${FILESDIR}/${P}-no-werror.patch"
+	epatch "${FILESDIR}/${P}-avmd.patch"
 
 	# Fix broken libtool?
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr/Makefile.in"
