@@ -14,7 +14,7 @@ HOMEPAGE="http://www.freeswitch.org/"
 KEYWORDS="~amd64 ~x86"
 LICENSE="MPL-1.1"
 SLOT="0"
-
+S="/var/tmp/portage/net-voip/freeswitch-1.10.0/work/freeswitch-1.10.0.-release"
 SRC_URI="http://files.freeswitch.org/releases/freeswitch/${P}.-release.tar.xz"
 # No idea what USE=libedit is actually good for
 IUSE="esl libedit odbc +resampler sctp +zrtp debug"
@@ -120,8 +120,8 @@ REQUIRED_USE="
 
 # Though speex is obsolete (see https://wiki.freeswitch.org/wiki/Mod_speex), configure fails without it
 RDEPEND="virtual/libc
-  dev-lang/yasm
-  !dev-lang/nasm
+	dev-lang/yasm
+	!dev-lang/nasm
 	>=media-libs/speex-1.2_rc1
 	libedit? ( dev-libs/libedit )
 	odbc? ( dev-db/unixODBC )
@@ -157,12 +157,12 @@ RDEPEND="virtual/libc
 	freeswitch_modules_xml_ldap? ( net-nds/openldap[sasl] )
 	freeswitch_modules_ladspa? ( media-libs/ladspa-sdk )
 	freeswitch_modules_freetdm? (
-		freetdm_modules_misdn? ( >=net-dialup/misdnuser-2.0.0 )
-		freetdm_modules_libpri? ( >=net-libs/libpri-1.4.0 )
-		freetdm_modules_wanpipe? ( net-misc/wanpipe )
-		freetdm_modules_sng_isdn? ( net-libs/libsng-isdn )
-		freetdm_modules_sng_ss7? ( net-libs/libsng-ss7 )
-		freetdm_modules_r2? ( net-misc/openr2 )
+	freetdm_modules_misdn? ( >=net-dialup/misdnuser-2.0.0 )
+	freetdm_modules_libpri? ( >=net-libs/libpri-1.4.0 )
+	freetdm_modules_wanpipe? ( net-misc/wanpipe )
+	freetdm_modules_sng_isdn? ( net-libs/libsng-isdn )
+	freetdm_modules_sng_ss7? ( net-libs/libsng-ss7 )
+	freetdm_modules_r2? ( net-misc/openr2 )
 	)
 "
 #	freeswitch_modules_mp4? ( media-libs/libmp4v2 )
@@ -379,7 +379,6 @@ src_prepare() {
 	einfo "Adding AMD module"
 	einfo
 	cp -R "${FILESDIR}/AMD" "${S}/src/mod/applications/mod_amd"
-	
 	einfo
 	einfo "Adding Ruby module"
 	einfo
