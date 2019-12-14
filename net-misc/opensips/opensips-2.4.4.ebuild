@@ -89,6 +89,13 @@ src_unpack() {
     use ipv6
 }
 
+src_prepare() {
+    epatch "${FILESDIR}/${P}-fs.patch"
+	epatch_user
+	eapply_user
+	eautoreconf
+}
+
 src_compile() {
     local compile_options
 
