@@ -12,7 +12,7 @@ SRC_URI="http://opensips.org/pub/opensips/${PV}/${MY_P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="debug ipv6 mysql postgres radius jabber ssl cpl unixodbc b2bua presence xmlrpc httpd json rest_client load_balancer redis"
+IUSE="debug ipv6 mysql postgres radius jabber ssl cpl unixodbc b2bua presence xmlrpc hep httpd json rest_client load_balancer redis siptrace"
 
 RDEPEND="
     rest_client? ( net-misc/curl )
@@ -79,6 +79,12 @@ pkg_setup() {
     use ssl && \
         inc_mod="${inc_mod} tls_mgm proto_tls"
 
+    use hep && \
+        inc_mod="${inc_mod} proto_hep"
+
+    use siptrace && \
+        inc_mod="${inc_mod} siptrace"
+
     export inc_mod
 }
 
@@ -87,6 +93,13 @@ src_unpack() {
 
     cd ${S}
     use ipv6
+}
+
+src_prepare() {
+    epatch "${FILESDIR}/${P}-fs.patch"
+	epatch_user
+	eapply_user
+	eautoreconf
 }
 
 src_compile() {
