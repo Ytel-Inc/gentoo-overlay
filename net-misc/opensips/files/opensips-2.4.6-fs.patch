@@ -1,6 +1,6 @@
 diff -Naur opensips-2.4.4/modules/freeswitch/esl/src/esl.c opensips-2.4.4-patch/modules/freeswitch/esl/src/esl.c
---- opensips-2.4.4/modules/freeswitch/esl/src/esl.c	2018-05-24 16:17:48.000000000 +0000
-+++ opensips-2.4.4-patch/modules/freeswitch/esl/src/esl.c	2019-12-04 18:25:01.710702134 +0000
+--- opensips-2.4.6/modules/freeswitch/esl/src/esl.c	2018-05-24 16:17:48.000000000 +0000
++++ opensips-2.4.6-patch/modules/freeswitch/esl/src/esl.c	2019-12-04 18:25:01.710702134 +0000
 @@ -1411,6 +1411,8 @@
  		if (!esl_safe_strcasecmp(hval, "text/disconnect-notice") && revent->body) {
  			const char *dval = esl_event_get_header(revent, "content-disposition");
