@@ -12,7 +12,7 @@ SRC_URI="http://opensips.org/pub/opensips/${PV}/${MY_P}.tar.gz"
 LICENSE="GPL-2"
 SLOT="0"
 KEYWORDS="~amd64 ~x86"
-IUSE="debug ipv6 mysql postgres radius jabber ssl cpl unixodbc b2bua presence xmlrpc hep httpd json rest_client load_balancer redis siptrace"
+IUSE="b2bua cpl debug hep httpd ipv6 jabber json load_balancer mysql postgres presence radius registrar redis rest_client siptrace ssl unixodbc xmlrpc"
 
 RDEPEND="
     rest_client? ( net-misc/curl )
@@ -75,6 +75,9 @@ pkg_setup() {
 
     use redis && \
         inc_mod="${inc_mod} cachedb_redis"
+
+    use registrar && \
+        inc_mod="${inc_mod} mid_registrar signaling tm usrloc"
 
     use ssl && \
         inc_mod="${inc_mod} tls_mgm proto_tls"
