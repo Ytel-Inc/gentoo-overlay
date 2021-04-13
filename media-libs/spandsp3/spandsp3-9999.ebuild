@@ -3,7 +3,7 @@
 
 EAPI="5"
 
-inherit multilib versionator git-r3
+inherit flag-o-matic multilib versionator git-r3
 
 DESCRIPTION="SpanDSP is a library of DSP functions for telephony"
 HOMEPAGE="https://github.com/freeswitch/spandsp"
@@ -14,7 +14,7 @@ KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 ~sparc x86"
 IUSE="doc fixed-point cpu_flags_x86_mmx cpu_flags_x86_sse cpu_flags_x86_sse2 cpu_flags_x86_sse3 static-libs"
 
 RDEPEND="media-libs/tiff
-	 virtual/jpeg"
+	virtual/jpeg"
 DEPEND="${RDEPEND}
 	doc? ( app-doc/doxygen
 		dev-libs/libxslt )"
@@ -32,14 +32,7 @@ S=${WORKDIR}/${PN}-$(get_version_component_range 1-3)
 # 	they need audiofile, fftw, libxml and probably more
 
 src_configure() {
-	# Note: flags over sse3 aren't really used -- they're only
-	# boilerplate. They also make some silly assumptions, e.g. that
-	# every CPU with SSE4* has SSSE3.
-	# Reference: https://bugs.funtoo.org/browse/FL-2069.
-	# If you want to re-add them, first check if the code started
-	# using them. If it did, figure out if the flags can be unbundled
-	# from one another. Otherwise, you'd have to do REQUIRED_USE.
-
+	./bootstrap.sh && ./configure.gnu --prefix=/usr --libdir=/usr/lib64 --enable-mmx --enable-sse --enable-sse2
 	econf \
 		$(use_enable doc) \
 		$(use_enable fixed-point) \
@@ -48,6 +41,7 @@ src_configure() {
 		$(use_enable cpu_flags_x86_sse2 sse2) \
 		$(use_enable cpu_flags_x86_sse3 sse3) \
 		$(use_enable static-libs static)
+
 }
 
 src_install() {

@@ -25,6 +25,7 @@ DEPEND="${RDEPEND}"
 BDEPEND="virtual/pkgconfig"
 
 src_configure() {
+	sh autogen.sh && ./configure.gnu --prefix=/usr --libdir=/usr/lib64
 	econf \
 		--disable-static \
 		$(use_with ssl openssl)
