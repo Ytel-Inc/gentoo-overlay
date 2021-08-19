@@ -2,8 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id:$
 
-EAPI="5"
-PYTHON_COMPAT=( python{2_7,3_3,3_4} ) # 3.4 needs to be tested
+EAPI="7"
+PYTHON_COMPAT=( python{3_8,3_9} ) # 3.4 needs to be tested
 PYTHON_REQ_USE='threads(+)'
 
 inherit autotools eutils flag-o-matic python-any-r1 user java-pkg-opt-2
@@ -125,24 +125,24 @@ RDEPEND="virtual/libc
 	>=media-libs/speex-1.2_rc1
 	libedit? ( dev-libs/libedit )
 	odbc? ( dev-db/unixODBC )
-	esl_java? ( >=dev-java/oracle-jdk-bin-1.8:* )
+	esl_java? ( >=dev-java/openjdk-bin-8:* )
 	esl_lua? ( || ( dev-lang/lua dev-lang/luajit:2 ) )
 	esl_managed? ( >=dev-lang/mono-1.9 )
 	esl_perl? ( dev-lang/perl )
-	esl_python? ( dev-lang/python:2.7 )
+	esl_python? ( dev-lang/python )
 	freeswitch_modules_alsa? ( media-libs/alsa-lib )
 	freeswitch_modules_radius_cdr? ( net-dialup/freeradius-client )
 	freeswitch_modules_xml_curl? ( net-misc/curl )
 	freeswitch_modules_enum? ( >=net-libs/ldns-1.6.6 )
 	freeswitch_modules_xml_ldap? ( net-nds/openldap )
 	freeswitch_modules_ldap? ( net-nds/openldap )
-	freeswitch_modules_java? ( >=dev-java/oracle-jdk-bin-1.8:* )
+	freeswitch_modules_java? ( >=dev-java/openjdk-bin-8:* )
 	freeswitch_modules_h323? ( || ( net-libs/openh323 net-libs/ptlib ) )
 	freeswitch_modules_opal? ( net-libs/opal[h323,iax] )
 	freeswitch_modules_opus? ( media-libs/opus )
 	freeswitch_modules_osp? ( >=net-libs/osptoolkit-4.0.3 )
 	freeswitch_modules_perl? ( dev-lang/perl[ithreads] )
-	freeswitch_modules_python? ( dev-lang/python:2.7 )
+	freeswitch_modules_python? ( dev-lang/python )
 	freeswitch_modules_managed? ( >=dev-lang/mono-1.9 )
 	freeswitch_modules_sndfile? ( media-libs/libsndfile )
 	freeswitch_modules_soundtouch? ( media-libs/libsoundtouch )
@@ -175,12 +175,12 @@ DEPEND="${RDEPEND}
 	dev-db/sqlite
 	media-libs/tiff
 	sctp? ( kernel_linux? ( net-misc/lksctp-tools ) )
-	esl_java? ( >=dev-java/oracle-jdk-bin-1.8:* =dev-lang/swig-3*:0 )
+	esl_java? ( >=dev-java/openjdk-bin-8:* =dev-lang/swig-3*:0 )
 	esl_lua? ( dev-lang/lua =dev-lang/swig-3*:0 )
 	esl_managed? ( =dev-lang/swig-3*:0 )
 	esl_perl? ( >=dev-lang/swig-3.1:1 )
 	esl_python? ( >=dev-lang/swig-3.1:1 )
-	freeswitch_modules_java? ( >=dev-java/oracle-jdk-bin-1.8:* )
+	freeswitch_modules_java? ( >=dev-java/openjdk-bin-8:* )
 "
 
 PDEPEND="media-sound/freeswitch-sounds
@@ -401,10 +401,11 @@ src_prepare() {
 
 	if use esl_python; then
 		python_get_version &>/dev/null && PYVER=$(python_get_version) || die "Failed to determine current python version"
-		sed -i -e "/^LOCAL_/{ s:python-2\.[0-9]:python-${PYVER}:g; s:python2\.[0-9]:python${PYVER}:g }" \
+		sed -i -e "/^LOCAL_/{ s:python-3\.[0-9]:python-${PYVER}:g; s:python3\.[0-9]:python${PYVER}:g }" \
 			libs/esl/python/Makefile || die "failed to change python locations in esl python module"
 	fi
 	epatch_user
+	eapply_user
 	eautoreconf
 }
 
