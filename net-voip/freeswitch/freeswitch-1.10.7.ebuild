@@ -197,6 +197,13 @@ PDEPEND="media-sound/freeswitch-sounds
 	freeswitch_modules_ssh? ( net-voip/freeswitch-mod_ssh )
 "
 
+# patches
+PATCHES=(
+	"${FILESDIR}/${P}-no-werror.patch"
+	"${FILESDIR}/${P}-gcc-11.patch"
+)
+
+
 for x in ${FM} ${FM_EXTERNAL}; do
 	IUSE="${IUSE} ${x//[^+]/}freeswitch_modules_${x/+}"
 done
@@ -377,11 +384,16 @@ esl_doperlmod() {
 }
 
 src_prepare() {
-	# disable -Werror
-	epatch "${FILESDIR}/${P}-no-werror.patch"
+
+	eapply "${FILESDIR}/${P}-no-werror.patch"
+	eapply "${FILESDIR}/${P}-gcc-11.patch"
+
 	# Fix broken libtool?
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr/Makefile.in"
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr-util/Makefile.in"
+
+
+	export CPPFLAGS="-Wno-array-parameter -Wno-error=deprecated-declarations -Wno-error=array-bounds"
 
 	einfo
 	einfo "Adding AMD module"
