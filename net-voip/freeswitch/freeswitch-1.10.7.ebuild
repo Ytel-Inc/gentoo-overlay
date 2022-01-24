@@ -19,6 +19,8 @@ SRC_URI="http://files.freeswitch.org/releases/freeswitch/${P}.-release.tar.xz"
 # No idea what USE=libedit is actually good for
 IUSE="esl libedit odbc +resampler sctp +zrtp debug"
 
+LIBVVAR="lib64"
+
 LANGS="de en es es_ar fa fr he hr hu it ja nl pl pt ru sv th zh"
 
 FREETDM_MODULES="
@@ -121,8 +123,13 @@ REQUIRED_USE="
 # Though speex is obsolete (see https://wiki.freeswitch.org/wiki/Mod_speex), configure fails without it
 RDEPEND="virtual/libc
 	dev-lang/yasm
+	media-libs/libvpx
+	net-analyzer/fping
+	media-libs/libpng
+	net-libs/libsrtp
 	!dev-lang/nasm
 	>=media-libs/speex-1.2_rc1
+	media-libs/speexdsp
 	libedit? ( dev-libs/libedit )
 	odbc? ( dev-db/unixODBC )
 	esl_java? ( >=dev-java/openjdk-bin-8:* )
@@ -145,12 +152,13 @@ RDEPEND="virtual/libc
 	freeswitch_modules_python? ( dev-lang/python )
 	freeswitch_modules_managed? ( >=dev-lang/mono-1.9 )
 	freeswitch_modules_sndfile? ( media-libs/libsndfile )
+	freeswitch_modules_sofia? ( net-libs/sofia-sip-ua )
 	freeswitch_modules_soundtouch? ( media-libs/libsoundtouch )
 	freeswitch_modules_skypopen? ( x11-base/xorg-server x11-apps/xhost net-im/skype media-fonts/font-misc-misc media-fonts/font-cursor-misc )
 	freeswitch_modules_memcache? ( net-misc/memcached )
 	freeswitch_modules_erlang_event? ( dev-lang/erlang )
 	freeswitch_modules_shout? ( media-libs/libogg >=media-sound/mpg123-1.20 media-libs/libshout media-sound/lame )
-	freeswitch_modules_spandsp? ( virtual/jpeg )
+	freeswitch_modules_spandsp? ( virtual/jpeg media-libs/libjpeg-turbo media-libs/spandsp3 )
 	freeswitch_modules_redis? ( dev-db/redis )
 	freeswitch_modules_cdr_pg_csv? ( dev-db/postgresql )
 	freeswitch_modules_gsmopen? ( net-libs/ctb[-gpib] app-mobilephone/gsmlib )
@@ -171,15 +179,16 @@ DEPEND="${RDEPEND}
 	>=sys-devel/autoconf-2.60
 	>=sys-devel/automake-1.10
 	virtual/pkgconfig
-	dev-lang/lua
+	=dev-lang/lua-5.4*
 	dev-db/sqlite
+	media-sound/sox
 	media-libs/tiff
 	sctp? ( kernel_linux? ( net-misc/lksctp-tools ) )
-	esl_java? ( >=dev-java/openjdk-bin-8:* =dev-lang/swig-3*:0 )
-	esl_lua? ( dev-lang/lua =dev-lang/swig-3*:0 )
-	esl_managed? ( =dev-lang/swig-3*:0 )
-	esl_perl? ( >=dev-lang/swig-3.1:1 )
-	esl_python? ( >=dev-lang/swig-3.1:1 )
+	esl_java? ( >=dev-java/openjdk-bin-8:* >=dev-lang/swig-4.0.0 )
+	esl_lua? ( dev-lang/lua >=dev-lang/swig-4.0.0 )
+	esl_managed? ( >=dev-lang/swig-4.0.0 )
+	esl_perl? ( >=dev-lang/swig-4.0.0 )
+	esl_python? ( >=dev-lang/swig-4.0.0 )
 	freeswitch_modules_java? ( >=dev-java/openjdk-bin-8:* )
 "
 
@@ -370,8 +379,6 @@ esl_doperlmod() {
 src_prepare() {
 	# disable -Werror
 	epatch "${FILESDIR}/${P}-no-werror.patch"
-	epatch "${FILESDIR}/${P}-avmd.patch"
-
 	# Fix broken libtool?
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr/Makefile.in"
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr-util/Makefile.in"
@@ -401,7 +408,7 @@ src_prepare() {
 
 	if use esl_python; then
 		python_get_version &>/dev/null && PYVER=$(python_get_version) || die "Failed to determine current python version"
-		sed -i -e "/^LOCAL_/{ s:python-3\.[0-9]:python-${PYVER}:g; s:python3\.[0-9]:python${PYVER}:g }" \
+		sed -i -e "/^LOCAL_/{ s:python-2\.[0-9]:python-${PYVER}:g; s:python2\.[0-9]:python${PYVER}:g }" \
 			libs/esl/python/Makefile || die "failed to change python locations in esl python module"
 	fi
 	eapply_user
@@ -556,11 +563,6 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo
-	elog "setting paxctl flags on binaries"
-	sh "${FILESDIR}"/pax_fix.sh
-	elog "pax flags have been set"
-	einfo
 
 	einfo
 	einfo "FreeSWITCH has been successfully emerged!"
