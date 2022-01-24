@@ -404,7 +404,6 @@ src_prepare() {
 		sed -i -e "/^LOCAL_/{ s:python-3\.[0-9]:python-${PYVER}:g; s:python3\.[0-9]:python${PYVER}:g }" \
 			libs/esl/python/Makefile || die "failed to change python locations in esl python module"
 	fi
-	epatch_user
 	eapply_user
 	eautoreconf
 }
