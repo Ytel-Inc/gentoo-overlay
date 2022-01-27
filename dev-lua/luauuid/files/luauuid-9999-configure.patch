@@ -1,0 +1,30 @@
+diff --git a/GNUmakefile b/GNUmakefile
+index be4e155..0fa8af2 100644
+--- a/GNUmakefile
++++ b/GNUmakefile
+@@ -1,6 +1,7 @@
+-SRCS=		luauuid.c
+-MODULE=		uuid
++CXX = gcc
++LUAVERSION=5.4
++LDFLAGS =-luuid `pkg-config --libs lua${LUAVERSION}`
++CXXFLAGS += -fPIC -shared -Wall `pkg-config lua${LUAVERSION} --cflags`
+ 
+-LDADD+=		-luuid
+-
+-include lua.module.mk
++all: lua_uuid.so
++		$(CC) $(CXXFLAGS) $(LDFLAG() -o lua_uuid.so luauuid.c
+diff --git a/luauuid.c b/luauuid.c
+index 0748c71..1c0d198 100644
+--- a/luauuid.c
++++ b/luauuid.c
+@@ -257,7 +257,7 @@ lua_uuid_length(lua_State *L)
+ }
+ 
+ int
+-luaopen_uuid(lua_State *L)
++luaopen_lua_uuid(lua_State *L)
+ {
+ 	struct luaL_Reg luauuid[] = {
+ 		{ "generate",		lua_uuid_generate },
