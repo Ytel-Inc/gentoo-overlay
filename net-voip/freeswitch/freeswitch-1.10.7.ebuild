@@ -387,6 +387,7 @@ src_prepare() {
 
 	eapply "${FILESDIR}/${P}-no-werror.patch"
 	eapply "${FILESDIR}/${P}-gcc-11.patch"
+	eapply "${FILESDIR}/${P}-configure.ac.patch"
 
 	# Fix broken libtool?
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr/Makefile.in"
