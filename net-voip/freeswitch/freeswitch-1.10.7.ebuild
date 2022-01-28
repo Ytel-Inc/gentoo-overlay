@@ -122,6 +122,7 @@ REQUIRED_USE="
 
 # Though speex is obsolete (see https://wiki.freeswitch.org/wiki/Mod_speex), configure fails without it
 RDEPEND="virtual/libc
+	dev-lua/luauuid
 	dev-lang/yasm
 	media-libs/libvpx
 	net-analyzer/fping
