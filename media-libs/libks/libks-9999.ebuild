@@ -5,7 +5,7 @@ EAPI=8
 inherit git-r3 cmake
 
 #PKG_CONFIG_PATH="/usr/lib64/pkgconfig"
-DESCRIPTION="Signalwire libks"
+DESCRIPTION="Foundational support for signalwire C products"
 HOMEPAGE="https://github.com/signalwire/libks"
 EGIT_REPO_URI="https://github.com/signalwire/libks.git"
 LICENSE="MIT"

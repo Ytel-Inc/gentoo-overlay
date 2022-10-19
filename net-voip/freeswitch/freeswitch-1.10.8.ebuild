@@ -3,7 +3,7 @@
 # $Id:$
 
 EAPI="7"
-PYTHON_COMPAT=( python{3_8,3_9} )
+PYTHON_COMPAT=( python{3_9,3_10} )
 PYTHON_REQ_USE='threads(+)'
 
 inherit autotools eutils flag-o-matic python-any-r1 user java-pkg-opt-2
