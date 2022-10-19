@@ -1,9 +1,10 @@
-diff -Naur freeswitch-1.10.7.-release/libs/apr/include/apr_general.h freeswitch-1.10.7.-patched/libs/apr/include/apr_general.h
---- freeswitch-1.10.7.-release/libs/apr/include/apr_general.h	2021-10-24 18:22:28.000000000 +0000
-+++ freeswitch-1.10.7.-patched/libs/apr/include/apr_general.h	2022-01-24 21:13:54.999903945 +0000
+diff --git a/libs/apr/include/fspr_general.h b/libs/apr/include/fspr_general.h
+index 103f69f..872ce8b 100644
+--- a/libs/apr/include/fspr_general.h
++++ b/libs/apr/include/fspr_general.h
 @@ -29,10 +29,6 @@
- #include "apr_pools.h"
- #include "apr_errno.h"
+ #include "fspr_pools.h"
+ #include "fspr_errno.h"
  
 -#if !defined(_ANSI_SOURCE) && defined(_DARWIN_C_SOURCE)
 -#define NSIG __DARWIN_NSIG

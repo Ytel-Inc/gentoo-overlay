@@ -1,8 +1,8 @@
 diff --git a/configure.ac b/configure.ac
-index 214f6f7..951d536 100644
+index 3d675b0..f3098b1 100644
 --- a/configure.ac
 +++ b/configure.ac
-@@ -577,7 +577,7 @@ AC_SUBST(SYS_XMLRPC_CFLAGS)
+@@ -582,7 +582,7 @@ AC_SUBST(SYS_XMLRPC_CFLAGS)
  AC_SUBST(SYS_XMLRPC_LDFLAGS)
  AM_CONDITIONAL([SYSTEM_XMLRPCC],[test "${enable_xmlrpcc}" = "yes"])
  
