@@ -8,6 +8,8 @@ PYTHON_REQ_USE='threads(+)'
 
 inherit autotools eutils flag-o-matic python-any-r1 user java-pkg-opt-2
 
+append-cppflags -Wno-array-parameter -Wno-error=deprecated-declarations -Wno-error=array-bounds
+
 DESCRIPTION="FreeSWITCH telephony platform"
 HOMEPAGE="http://www.freeswitch.org/"
 
@@ -474,7 +476,6 @@ src_compile() {
 	if use freeswitch_modules_freetdm; then
 #	# breaks freetdm:
 #	filter-flags -fvisibility-inlines-hidden
-	append-cppflags -Wno-array-parameter -Wno-error=deprecated-declarations -Wno-error=array-bounds
 		einfo "Building FreeTDM..."
 		emake -C libs/freetdm || die "failed to build FreeTDM"
 	fi
