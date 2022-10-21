@@ -32,5 +32,6 @@ src_install() {
 pkg_postinst() {
 	cd "${S}"
 	make install
+	ln -s /usr/lib/pkgconfig/libks.pc /usr/lib64/pkgconfig/libks.pc
 }
 

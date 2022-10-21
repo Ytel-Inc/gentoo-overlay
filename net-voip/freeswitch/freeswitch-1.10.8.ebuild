@@ -17,7 +17,7 @@ SLOT="0"
 S="/var/tmp/portage/net-voip/freeswitch-1.10.8/work/freeswitch-1.10.8.-release"
 SRC_URI="http://files.freeswitch.org/releases/freeswitch/${P}.-release.tar.xz"
 # No idea what USE=libedit is actually good for
-IUSE="esl libedit odbc +resampler sctp +zrtp debug"
+IUSE="esl libedit odbc +resampler sctp +zrtp debug ffmpeg"
 
 LIBVVAR="lib64"
 
@@ -40,7 +40,7 @@ FM_APPLICATIONS="
 	+voicemail voicemail_ivr amd ruby vm ytel_dial
 "
 FM_TTS="
-	cepstral flite pocketsphinx tts_commandline unimrcp
+	cepstral flite pocketsphinx tts_commandline
 "
 FM_CODECS="
 	+amr amrwb +bv codec2 com_g729 dahdi_codec +g723_1 +g729
@@ -54,8 +54,8 @@ FM_DIRECTORIES="
 	ldap
 "
 FM_ENDPOINTS="
-	alsa dingaling freetdm gsmopen h323 khomp +loopback opal
-	portaudio reference rtc rtmp skinny skypopen +sofia unicall verto
+	alsa freetdm gsmopen h323 khomp +loopback opal
+	portaudio reference rtc rtmp skinny skypopen +sofia unicall verto signalwire
 "
 FM_EVENT_HANDLERS="
 	+cdr_csv cdr_mongodb cdr_pg_csv cdr_sqlite erlang_event
@@ -138,6 +138,7 @@ RDEPEND="virtual/libc
 	esl_managed? ( >=dev-lang/mono-1.9 )
 	esl_perl? ( dev-lang/perl )
 	esl_python? ( dev-lang/python )
+	ffmpeg? ( media-video/ffmpeg dev-libs/apr-util dev-libs/apr dev-libs/libvformat )
 	freeswitch_modules_alsa? ( media-libs/alsa-lib )
 	freeswitch_modules_radius_cdr? ( net-dialup/freeradius-client )
 	freeswitch_modules_xml_curl? ( net-misc/curl )
@@ -199,15 +200,15 @@ PDEPEND="media-sound/freeswitch-sounds
 "
 
 # patches
-PATCHES=(
-	"${FILESDIR}/${P}-no-werror.patch"
-	"${FILESDIR}/${P}-gcc-11.patch"
-)
+#PATCHES=(
+#	"${FILESDIR}/${P}-configure.ac.patch"
+#)
 
 
 for x in ${FM} ${FM_EXTERNAL}; do
 	IUSE="${IUSE} ${x//[^+]/}freeswitch_modules_${x/+}"
 done
+
 for x in ${FREETDM_MODULES}; do
 	IUSE="${IUSE} ${x//[^+]/}freetdm_modules_${x/+}"
 done
@@ -300,7 +301,7 @@ setup_modules() {
 	[ -f "modules.conf" ] && {
 		rm -f "modules.conf" || die "Failed to remove existing modules.conf"
 	}
-	einfo "Optional modules:"
+	einfo "Setting up modules"
 	for x in ${FM}; do
 		mod="${x/+}"
 		action="enable"
@@ -385,17 +386,12 @@ esl_doperlmod() {
 }
 
 src_prepare() {
-
-	eapply "${FILESDIR}/${P}-no-werror.patch"
+	default
 	eapply "${FILESDIR}/${P}-gcc-11.patch"
 	eapply "${FILESDIR}/${P}-configure.ac.patch"
-
-	# Fix broken libtool?
-	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr/Makefile.in"
-	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr-util/Makefile.in"
-
-
-	export CPPFLAGS="-Wno-array-parameter -Wno-error=deprecated-declarations -Wno-error=array-bounds"
+	eautoconf
+	eautomake
+	patch -p1 < /ytel/repos/gentoo-overlay/net-voip/freeswitch/files/freeswitch-1.10.8-configbug.patch
 
 	einfo
 	einfo "Adding AMD module"
@@ -413,20 +409,8 @@ src_prepare() {
 	einfo "Adding ytel_dial module"
 	einfo
 	cp -R "${FILESDIR}/YTEL_DIAL" "${S}/src/mod/applications/mod_ytel_dial"
+	setup_modules
 
-
-	if use freeswitch_modules_freetdm
-	then
-		( cd "${S}/libs/freetdm" ; ./bootstrap ; ) || die "Failed to bootstrap FreeTDM"
-	fi
-
-	if use esl_python; then
-		python_get_version &>/dev/null && PYVER=$(python_get_version) || die "Failed to determine current python version"
-		sed -i -e "/^LOCAL_/{ s:python-2\.[0-9]:python-${PYVER}:g; s:python2\.[0-9]:python${PYVER}:g }" \
-			libs/esl/python/Makefile || die "failed to change python locations in esl python module"
-	fi
-	eapply_user
-	eautoreconf
 }
 
 src_configure() {
@@ -444,6 +428,8 @@ src_configure() {
 		export CFLAGS="-g -ggdb"
 		export MOD_CFLAGS="-g -ggdb"
 	fi
+
+
 
 	einfo "Configuring FreeSWITCH..."
 		touch noreg
@@ -480,7 +466,6 @@ src_configure() {
 			${config_opts} || die "failed to configure FreeTDM"
 		popd
 	fi
-	setup_modules
 }
 
 src_compile() {
@@ -489,6 +474,7 @@ src_compile() {
 	if use freeswitch_modules_freetdm; then
 #	# breaks freetdm:
 #	filter-flags -fvisibility-inlines-hidden
+	append-cppflags -Wno-array-parameter -Wno-error=deprecated-declarations -Wno-error=array-bounds
 		einfo "Building FreeTDM..."
 		emake -C libs/freetdm || die "failed to build FreeTDM"
 	fi
