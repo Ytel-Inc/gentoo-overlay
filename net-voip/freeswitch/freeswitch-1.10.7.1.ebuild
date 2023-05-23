@@ -3,10 +3,10 @@
 # $Id:$
 
 EAPI="7"
-PYTHON_COMPAT=( python{3_8,3_9} ) # 3.4 needs to be tested
+PYTHON_COMPAT=( python{3_8,3_9,3_11} )
 PYTHON_REQ_USE='threads(+)'
 
-inherit autotools eutils flag-o-matic python-any-r1 user java-pkg-opt-2
+inherit autotools eutils flag-o-matic python-any-r1 java-pkg-opt-2
 
 DESCRIPTION="FreeSWITCH telephony platform"
 HOMEPAGE="http://www.freeswitch.org/"
@@ -14,10 +14,12 @@ HOMEPAGE="http://www.freeswitch.org/"
 KEYWORDS="~amd64 ~x86"
 LICENSE="MPL-1.1"
 SLOT="0"
-S="/var/tmp/portage/net-voip/freeswitch-1.10.1/work/freeswitch-1.10.1.-release"
-SRC_URI="http://files.freeswitch.org/releases/freeswitch/${P}.-release.tar.xz"
-# No idea what USE=libedit is actually good for
+S="/var/tmp/portage/net-voip/freeswitch-1.10.7.1/work/freeswitch-1.10.7.-release"
+SRC_URI="http://files.freeswitch.org/releases/freeswitch/freeswitch-1.10.7.-release.tar.xz"
+# Lib edit is used for Console scroll back
 IUSE="esl libedit odbc +resampler sctp +zrtp debug"
+
+LIBVVAR="lib64"
 
 LANGS="de en es es_ar fa fr he hr hu it ja nl pl pt ru sv th zh"
 
@@ -35,7 +37,8 @@ FM_APPLICATIONS="
 	http_cache ladspa lcr +limit memcache mongo nibblebill
 	osp rad_auth random redis rss skel +sms snapshot
 	snom soundtouch +spandsp spy stress +valet_parking vmd
-	+voicemail voicemail_ivr amd ruby vm ytel_dial
+	+voicemail voicemail_ivr amd ruby vm ytel_dial google_tts 
+	google_transcribe dialogflow
 "
 FM_TTS="
 	cepstral flite pocketsphinx tts_commandline unimrcp
@@ -117,12 +120,21 @@ REQUIRED_USE="
 	freetdm_modules_sng_ss7? ( freeswitch_modules_freetdm )
 	freetdm_modules_wanpipe? ( freeswitch_modules_freetdm )
 "
+	#freeswitch_modules_google_transcribe ( net-libs/grpc freeswitch_modules_googleapis)
+	#freeswitch_modules_google_tts ( net-libs/grpc freeswitch_modules_googleapis)
+	#freeswitch_modules_dialogflow ( net-libs/grpc freeswitch_modules_googleapis)
 
 # Though speex is obsolete (see https://wiki.freeswitch.org/wiki/Mod_speex), configure fails without it
 RDEPEND="virtual/libc
+	dev-lua/luauuid
 	dev-lang/yasm
+	media-libs/libvpx
+	net-analyzer/fping
+	media-libs/libpng
+	net-libs/libsrtp
 	!dev-lang/nasm
 	>=media-libs/speex-1.2_rc1
+	media-libs/speexdsp
 	libedit? ( dev-libs/libedit )
 	odbc? ( dev-db/unixODBC )
 	esl_java? ( >=dev-java/openjdk-bin-8:* )
@@ -145,17 +157,21 @@ RDEPEND="virtual/libc
 	freeswitch_modules_python? ( dev-lang/python )
 	freeswitch_modules_managed? ( >=dev-lang/mono-1.9 )
 	freeswitch_modules_sndfile? ( media-libs/libsndfile )
+	freeswitch_modules_sofia? ( net-libs/sofia-sip-ua )
 	freeswitch_modules_soundtouch? ( media-libs/libsoundtouch )
 	freeswitch_modules_skypopen? ( x11-base/xorg-server x11-apps/xhost net-im/skype media-fonts/font-misc-misc media-fonts/font-cursor-misc )
 	freeswitch_modules_memcache? ( net-misc/memcached )
 	freeswitch_modules_erlang_event? ( dev-lang/erlang )
 	freeswitch_modules_shout? ( media-libs/libogg >=media-sound/mpg123-1.20 media-libs/libshout media-sound/lame )
-	freeswitch_modules_spandsp? ( virtual/jpeg )
+	freeswitch_modules_spandsp? ( virtual/jpeg media-libs/libjpeg-turbo media-libs/spandsp3 )
 	freeswitch_modules_redis? ( dev-db/redis )
 	freeswitch_modules_cdr_pg_csv? ( dev-db/postgresql )
 	freeswitch_modules_gsmopen? ( net-libs/ctb[-gpib] app-mobilephone/gsmlib )
 	freeswitch_modules_xml_ldap? ( net-nds/openldap[sasl] )
 	freeswitch_modules_ladspa? ( media-libs/ladspa-sdk )
+	freeswitch_modules_google_transcribe? ( net-libs/grpc )
+	freeswitch_modules_google_tts? ( net-libs/grpc )
+	freeswitch_modules_dialogflow? ( net-libs/grpc )
 	freeswitch_modules_freetdm? (
 	freetdm_modules_misdn? ( >=net-dialup/misdnuser-2.0.0 )
 	freetdm_modules_libpri? ( >=net-libs/libpri-1.4.0 )
@@ -171,15 +187,16 @@ DEPEND="${RDEPEND}
 	>=sys-devel/autoconf-2.60
 	>=sys-devel/automake-1.10
 	virtual/pkgconfig
-	dev-lang/lua
+	=dev-lang/lua-5.4*
 	dev-db/sqlite
+	media-sound/sox
 	media-libs/tiff
 	sctp? ( kernel_linux? ( net-misc/lksctp-tools ) )
-	esl_java? ( >=dev-java/openjdk-bin-8:* =dev-lang/swig-3*:0 )
-	esl_lua? ( dev-lang/lua =dev-lang/swig-3*:0 )
-	esl_managed? ( =dev-lang/swig-3*:0 )
-	esl_perl? ( >=dev-lang/swig-3.1:1 )
-	esl_python? ( >=dev-lang/swig-3.1:1 )
+	esl_java? ( >=dev-java/openjdk-bin-8:* >=dev-lang/swig-4.0.0 )
+	esl_lua? ( dev-lang/lua >=dev-lang/swig-4.0.0 )
+	esl_managed? ( >=dev-lang/swig-4.0.0 )
+	esl_perl? ( >=dev-lang/swig-4.0.0 )
+	esl_python? ( >=dev-lang/swig-4.0.0 )
 	freeswitch_modules_java? ( >=dev-java/openjdk-bin-8:* )
 "
 
@@ -187,6 +204,13 @@ PDEPEND="media-sound/freeswitch-sounds
 	media-sound/freeswitch-sounds-music
 	freeswitch_modules_ssh? ( net-voip/freeswitch-mod_ssh )
 "
+
+# patches
+PATCHES=(
+	"${FILESDIR}/${P}-no-werror.patch"
+	"${FILESDIR}/${P}-gcc-11.patch"
+)
+
 
 for x in ${FM} ${FM_EXTERNAL}; do
 	IUSE="${IUSE} ${x//[^+]/}freeswitch_modules_${x/+}"
@@ -368,13 +392,17 @@ esl_doperlmod() {
 }
 
 src_prepare() {
-	# disable -Werror
-	epatch "${FILESDIR}/${P}-no-werror.patch"
-	epatch "${FILESDIR}/${P}-avmd.patch"
+
+	eapply "${FILESDIR}/${P}-no-werror.patch"
+	eapply "${FILESDIR}/${P}-gcc-11.patch"
+	eapply "${FILESDIR}/${P}-configure.ac.patch"
 
 	# Fix broken libtool?
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr/Makefile.in"
 	sed -i "1i export to_tool_file_cmd=func_convert_file_noop" "${S}/libs/apr-util/Makefile.in"
+
+
+	export CPPFLAGS="-Wno-array-parameter -Wno-error=deprecated-declarations -Wno-error=array-bounds"
 
 	einfo
 	einfo "Adding AMD module"
@@ -392,7 +420,48 @@ src_prepare() {
 	einfo "Adding ytel_dial module"
 	einfo
 	cp -R "${FILESDIR}/YTEL_DIAL" "${S}/src/mod/applications/mod_ytel_dial"
-
+	if use freeswitch_modules_google_tts OR use freeswitch_modules_dialogflow OR use freeswitch_modules_google_transcribe
+	then
+	  eapply "${FILESDIR}/${P}-google-configure.ac.patch"
+	  eapply "${FILESDIR}/${P}-google-Makefile.am.patch"
+	  eapply "${FILESDIR}/${P}-switch_rtp.c.patch"
+	  einfo
+	  einfo "Adding googleapis"
+	  einfo
+	  cp -R "${FILESDIR}/googleapis" "${S}/libs/"
+	  einfo
+	  einfo "Build googleapis"
+	  einfo
+	  ( cd "${S}/libs/googleapis" ; \
+	        git checkout e9da6f8b469c52b83f900e820be30762e9e05c57 ; \
+	        sed -i 's/\$fields/fields/' google/maps/routes/v1/route_service.proto ; \
+            sed -i 's/\$fields/fields/' google/maps/routes/v1alpha/route_service.proto ; \
+			sed -i 's/\/usr\/local\/bin\/grpc_/\/usr\/bin\/grpc_/' Makefile ; \
+			LD_LIBRARY_PATH=/usr/local/lib:/usr/lib  ; \
+            LANGUAGE=cpp make -j 4 ;
+	  ) || die "Failed to process Google APIS"
+    fi
+	if use freeswitch_modules_google_tts 
+	then
+	  einfo
+	  einfo "Adding google TTS"
+	  einfo
+	  cp -R "${FILESDIR}/mod_google_tts" "${S}/src/mod/applications/"
+	fi
+	if use freeswitch_modules_dialogflow 
+	then
+	  einfo
+	  einfo "Adding dialog flow"
+	  einfo
+	  cp -R "${FILESDIR}/mod_dialogflow" "${S}/src/mod/applications/"
+	fi
+	if use freeswitch_modules_google_transcribe
+	then
+	  einfo
+	  einfo "Adding google transcribe"
+	  einfo
+	  cp -R "${FILESDIR}/mod_google_transcribe" "${S}/src/mod/applications/"
+	fi
 
 	if use freeswitch_modules_freetdm
 	then
@@ -401,10 +470,9 @@ src_prepare() {
 
 	if use esl_python; then
 		python_get_version &>/dev/null && PYVER=$(python_get_version) || die "Failed to determine current python version"
-		sed -i -e "/^LOCAL_/{ s:python-3\.[0-9]:python-${PYVER}:g; s:python3\.[0-9]:python${PYVER}:g }" \
+		sed -i -e "/^LOCAL_/{ s:python-2\.[0-9]:python-${PYVER}:g; s:python2\.[0-9]:python${PYVER}:g }" \
 			libs/esl/python/Makefile || die "failed to change python locations in esl python module"
 	fi
-	epatch_user
 	eapply_user
 	eautoreconf
 }
@@ -417,6 +485,11 @@ src_configure() {
 		config_opts="--with-libpri"
 	use freetdm_modules_misdn && \
 		config_opts="--with-misdn"
+	if use freeswitch_modules_dialogflow || use freeswitch_modules_google_tts || use freeswitch_modules_google_transcribe; then 
+		config_opts="$config_opts --with-extra=yes"
+		#pushd "${S}/libs/freetdm"
+
+	fi
 
 	use debug || config_opts="${config_opts} --disable-debug"
 
@@ -557,11 +630,6 @@ src_install() {
 }
 
 pkg_postinst() {
-	einfo
-	elog "setting paxctl flags on binaries"
-	sh "${FILESDIR}"/pax_fix.sh
-	elog "pax flags have been set"
-	einfo
 
 	einfo
 	einfo "FreeSWITCH has been successfully emerged!"

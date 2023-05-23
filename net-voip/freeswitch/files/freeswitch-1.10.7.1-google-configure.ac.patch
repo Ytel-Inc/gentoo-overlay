@@ -1,0 +1,32 @@
+--- freeswitch-1.10.7.-release.rance/configure.ac	2021-10-24 18:22:29.000000000 +0000
++++ freeswitch-1.10.7.-release/configure.ac	2023-04-21 00:50:21.481269469 +0000
+@@ -1588,6 +1588,19 @@
+ 
+ AC_SUBST(SYSTEMD_LIBS)
+ 
++dnl DH: Added for including google protobuf libs
++AC_ARG_WITH(extra,
++   [AS_HELP_STRING([--with-extra],
++     [enable support for extra modules which require google rpc (libgrpc++ and libgrpc)])],
++   [with_extra="$withval"],
++   [with_extra="no"])
++if test "$with_extra" = "yes"; then
++   PKG_CHECK_MODULES([GRPC], [grpc++ grpc], [
++     AM_CONDITIONAL([HAVE_GRPC],[true])], [
++     AC_MSG_RESULT([no]); AM_CONDITIONAL([HAVE_GRPC],[false])])
++else
++     AM_CONDITIONAL([HAVE_GRPC],[false])
++fi
+ 
+ dnl ---------------------------------------------------------------------------
+ dnl - OpenLDAP SDK
+@@ -2053,6 +2066,9 @@
+ 		tests/unit/Makefile
+ 		src/Makefile
+ 		src/mod/Makefile
++                src/mod/applications/mod_google_tts/Makefile
++                src/mod/applications/mod_google_transcribe/Makefile
++                src/mod/applications/mod_dialogflow/Makefile
+ 		src/mod/applications/mod_abstraction/Makefile
+ 		src/mod/applications/mod_avmd/Makefile
+ 		src/mod/applications/mod_bert/Makefile

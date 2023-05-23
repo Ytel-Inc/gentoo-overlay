@@ -6,7 +6,7 @@ EAPI="7"
 PYTHON_COMPAT=( python{3_8,3_9} )
 PYTHON_REQ_USE='threads(+)'
 
-inherit autotools eutils flag-o-matic python-any-r1 user java-pkg-opt-2
+inherit autotools eutils flag-o-matic python-any-r1 java-pkg-opt-2
 
 DESCRIPTION="FreeSWITCH telephony platform"
 HOMEPAGE="http://www.freeswitch.org/"
