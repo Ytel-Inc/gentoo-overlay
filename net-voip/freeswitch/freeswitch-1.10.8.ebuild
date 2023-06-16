@@ -391,6 +391,7 @@ src_prepare() {
 	default
 	eapply "${FILESDIR}/${P}-gcc-11.patch"
 	eapply "${FILESDIR}/${P}-configure.ac.patch"
+	eapply "${FILESDIR}/${P}-no-werror.patch"
 	eautoconf
 	eautomake
 	patch -p1 < /ytel/repos/gentoo-overlay/net-voip/freeswitch/files/freeswitch-1.10.8-configbug.patch
