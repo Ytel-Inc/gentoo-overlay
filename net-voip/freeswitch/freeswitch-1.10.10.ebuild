@@ -2,11 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id:$
 
-EAPI="7"
+EAPI=8
 PYTHON_COMPAT=( python{3_10,3_11} )
 PYTHON_REQ_USE='threads(+)'
 
-inherit autotools eutils flag-o-matic python-any-r1 java-pkg-opt-2
+inherit autotools flag-o-matic python-any-r1 java-pkg-opt-2
 
 append-cppflags -Wno-array-parameter -Wno-error=deprecated-declarations -Wno-error=array-bounds
 
