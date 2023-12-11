@@ -2,8 +2,8 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id$
 
-EAPI=7
-inherit autotools eutils multilib user systemd git-r3 flag-o-matic
+EAPI=8
+inherit autotools multilib systemd git-r3 flag-o-matic
 
 DESCRIPTION="Janus WebRTC Gateway: Janus is an open source, general purpose, WebRTC gateway designed and developed by Meetecho."
 HOMEPAGE="http://janus.conf.meetecho.com/"
@@ -41,10 +41,10 @@ DEPEND="docs? ( app-doc/doxygen media-gfx/graphviz )
 S="${WORKDIR}/janus-9999"
 
 src_prepare() {
-  use debug && epatch "${FILESDIR}/janus_debug.patch"
+	use debug && epatch "${FILESDIR}/janus_debug.patch"
 	./autogen.sh || die "Autogen script failed"
-  default
-  eautoreconf
+	default
+	eautoreconf
 }
 
 src_configure() {
@@ -56,7 +56,7 @@ src_configure() {
 			--prefix=/usr \
 			$(use_enable websockets) \
 			$(use_enable rabbitmq) \
-		        $(use_enable mqtt) \
+			$(use_enable mqtt) \
 			$(use_enable data-channels) \
 			$(use_enable rabbitmq-event-handler) \
 			$(use_enable sample-event-handler) \
@@ -80,12 +80,12 @@ src_compile() {
 
 src_install() {
 
-  emake DESTDIR="${D}" configs
-  default
+	emake DESTDIR="${D}" configs
+	default
 
 
-  newinitd "${FILESDIR}"/janus-initd janus || die "newinitd failed"
-  newconfd "${FILESDIR}"/janus-confd janus || die "newconfd failed"
+	newinitd "${FILESDIR}"/janus-initd janus || die "newinitd failed"
+	newconfd "${FILESDIR}"/janus-confd janus || die "newconfd failed"
 
 
 }

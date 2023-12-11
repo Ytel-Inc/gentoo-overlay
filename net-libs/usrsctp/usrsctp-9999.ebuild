@@ -6,7 +6,7 @@
 # more information
 #
 
-EAPI="7"
+EAPI="8"
 
 IUSE=""
 
@@ -27,9 +27,9 @@ DEPEND="${RDEPEND}
 	>=sys-devel/autoconf-2.61
 	>=sys-devel/automake-1.10"
 
-src_configure() {
-	econf || die "econf failed"
-}
+#src_configure() {
+#	econf || die "econf failed"
+#}
 
 src_compile() {
 	emake || die "emake failed"
