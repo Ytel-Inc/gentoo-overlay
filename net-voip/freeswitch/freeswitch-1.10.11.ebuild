@@ -2,11 +2,11 @@
 # Distributed under the terms of the GNU General Public License v2
 # $Id:$
 
-EAPI="7"
+EAPI=8
 PYTHON_COMPAT=( python{3_10,3_11} )
 PYTHON_REQ_USE='threads(+)'
 
-inherit autotools eutils flag-o-matic python-any-r1 java-pkg-opt-2
+inherit autotools flag-o-matic python-any-r1 java-pkg-opt-2
 
 append-cppflags -Wno-array-parameter -Wno-error=deprecated-declarations -Wno-error=array-bounds
 
@@ -16,7 +16,7 @@ HOMEPAGE="http://www.freeswitch.org/"
 KEYWORDS="~amd64 ~x86"
 LICENSE="MPL-1.1"
 SLOT="0"
-S="/var/tmp/portage/net-voip/freeswitch-1.10.8/work/freeswitch-1.10.8.-release"
+S="/var/tmp/portage/net-voip/freeswitch-1.10.10/work/freeswitch-1.10.10.-release"
 SRC_URI="http://files.freeswitch.org/releases/freeswitch/${P}.-release.tar.xz"
 # No idea what USE=libedit is actually good for
 IUSE="esl libedit odbc +resampler sctp +zrtp debug ffmpeg"
@@ -389,7 +389,7 @@ esl_doperlmod() {
 
 src_prepare() {
 	default
-	eapply "${FILESDIR}/${P}-gcc-11.patch"
+#	eapply "${FILESDIR}/${P}-gcc-11.patch"
 	eapply "${FILESDIR}/${P}-configure.ac.patch"
 	eapply "${FILESDIR}/${P}-no-werror.patch"
 	eautoconf

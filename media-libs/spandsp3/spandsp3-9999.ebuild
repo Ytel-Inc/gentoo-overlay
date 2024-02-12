@@ -8,6 +8,7 @@ inherit flag-o-matic multilib versionator git-r3
 DESCRIPTION="SpanDSP is a library of DSP functions for telephony"
 HOMEPAGE="https://github.com/freeswitch/spandsp"
 EGIT_REPO_URI="https://github.com/freeswitch/spandsp.git"
+EGIT_COMMIT="67d2455efe02e7ff0d897f3fd5636fed4d54549e"
 LICENSE="LGPL-2.1"
 SLOT="0"
 KEYWORDS="~alpha amd64 arm arm64 ~hppa ~ia64 ppc ppc64 ~sparc x86"
