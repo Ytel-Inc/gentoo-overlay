@@ -16,7 +16,7 @@ HOMEPAGE="http://www.freeswitch.org/"
 KEYWORDS="~amd64 ~x86"
 LICENSE="MPL-1.1"
 SLOT="0"
-S="/var/tmp/portage/net-voip/freeswitch-1.10.10/work/freeswitch-1.10.10.-release"
+S="/var/tmp/portage/net-voip/${P}/work/${P}.-release"
 SRC_URI="http://files.freeswitch.org/releases/freeswitch/${P}.-release.tar.xz"
 # No idea what USE=libedit is actually good for
 IUSE="esl libedit odbc +resampler sctp +zrtp debug ffmpeg"
@@ -180,8 +180,8 @@ RDEPEND="virtual/libc
 #	freeswitch_modules_mp4? ( media-libs/libmp4v2 )
 
 DEPEND="${RDEPEND}
-	>=sys-devel/autoconf-2.60
-	>=sys-devel/automake-1.10
+	>=dev-build/autoconf-2.71-r6
+	>=dev-build/automake-1.16.5-r2
 	virtual/pkgconfig
 	=dev-lang/lua-5.4*
 	dev-db/sqlite
